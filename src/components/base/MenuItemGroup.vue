@@ -13,14 +13,14 @@
         v-text="computedText"
       />
 
-      <v-list-item-avatar
+      <!-- <v-list-item-avatar
         v-else-if="item.avatar"
         class="align-self-center"
         color="white"
         contain
       >
         <v-img src="https://demos.creative-tim.com/vuetify-material-dashboard/favicon.ico" />
-      </v-list-item-avatar>
+      </v-list-item-avatar> -->
 
       <v-list-item-content>
         <v-list-item-title v-text="item.title" />
@@ -86,7 +86,7 @@
     get children () {
       return this.$props.item.children.map(item => ({
         ...item,
-        to: !item.to ? undefined : `${this.$props.item.group}/${item.to}`,
+        to: !item.to ? '' : item.to,
       }))
     }
 

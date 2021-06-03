@@ -54,7 +54,7 @@
 					</v-badge>
 				</v-btn>
 			</template>
-      
+
 			<v-list :tile="false" nav>
 				<div>
 					<app-bar-item v-for="(n, i) in notifications" :key="`item-${i}`">
@@ -67,15 +67,20 @@
 		<v-btn class="ml-2" min-width="0" text to="/pages/user">
 			<v-icon>mdi-account</v-icon>
 		</v-btn>
+		<span v-if="isLoggedIn">
+			<a @click="logout">Logout</a>
+		</span>
 	</v-app-bar>
 </template>
 
 <script lang="ts">
 	import { Vue, Component } from "vue-property-decorator";
 	import { Mutation, State } from "vuex-class";
+	import AuthService from "@/utils/AuthService";
 
 	// Components
 	import { VHover, VListItem } from "vuetify/lib";
+
 
 	@Component({
 		props: {
@@ -131,8 +136,17 @@
 				"Another one",
 			];
 		}
-
 		@Mutation("SET_DRAWER")
 		setDrawer!: () => void;
+
+		isLoggedIn(): boolean {
+			console.log("mondi", this.$store.getters.isAuthenticated);
+			
+			return this.$store.getters.isAuthenticated;
+		}
+
+		async logout(): Promise<void> {
+			AuthService.logout();
+		}
 	}
 </script>

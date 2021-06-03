@@ -1,0 +1,22 @@
+[
+	{
+		"name": "State",
+		"plural": "States"
+	},
+	{
+		"name": "Type",
+		"plural": "Types"
+	},
+	{
+		"name": "Statuses",
+		"plural": "Status"
+	},
+	{
+		"name": "Currencies",
+		"plural": "Currency"
+	},
+	{
+		"name": "Leagues",
+		"plural": "League"
+	}
+]

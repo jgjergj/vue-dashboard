@@ -1,3 +1,5 @@
 <template>
-  <h1>Hello</h1>
+	<v-app>
+		<h1>Dashboard</h1>
+	</v-app>
 </template>

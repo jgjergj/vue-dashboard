@@ -45,13 +45,13 @@
     internalValue = this.$props.value;
 
     @Watch('internalValue')
-    onPropertyChanged(val, oldVal){
+    onInternalValueChanged(val, oldVal){
         if (val === oldVal) 
           return this.$emit('input', val);
     }
 
     @Watch('value')
-    onPropertyChanged2(val, oldVal){
+    onValueChanged(val, oldVal){
       if (val === oldVal)
         return this.internalValue = val
     }
