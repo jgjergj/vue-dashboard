@@ -125,9 +125,29 @@
           title: 'Settings',
           children: [
             {
+              title: 'Clients',
+              icon: 'mdi-account',
+              to: '/clients',
+            },
+            {
+              title: 'Currencies',
+              icon: 'mdi-account',
+              to: '/currencies',
+            },
+            {
+              title: 'Sports',
+              icon: 'mdi-google-maps',
+              to: '/sports',
+            },
+            {
               title: 'States',
               icon: 'mdi-google-maps',
               to: '/states',
+            },
+            {
+              title: 'Statuses',
+              icon: 'mdi-google-maps',
+              to: '/statuses',
             }, 
             {
               title: 'Types',

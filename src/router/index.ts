@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import AuthService from "../utils/AuthService";
 import OidcCallback from "../views/OidcCallback.vue";
+import entities from '../constants/entities.json';
 
 Vue.use(VueRouter);
 
@@ -76,12 +77,10 @@ const routes: Array<RouteConfig> = [
 	},
 ];
 
-const cruds = ["Types", "Statuses", "Currencies", "States", "Leagues"];
-
-cruds.forEach((element) => {
+entities.forEach((element) => {
 	routes[0].children?.push({
-		name: element,
-		path: `/${element.toLowerCase()}`,
+		name: element.plural,
+		path: `/${element.plural.toLowerCase()}`,
 		component: () => import("@/views/crud/Crud.vue"),
 		meta: {
 			isSecure: true,

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<router-view />
+		<router-view :key="$route.name" />
 		<v-btn @click="login">Login</v-btn>
 		<v-btn @click="getStates">Get States</v-btn>
 	</div>
@@ -20,7 +20,8 @@
 
 	@Component
 	export default class App extends Vue {
-		name = "App";
+		// name = "App";
+			name = this.$route.name
 
 		constructor() {
 			super();

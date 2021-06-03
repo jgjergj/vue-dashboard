@@ -53,8 +53,8 @@
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
 										<v-text-field
-											v-model="editedItem.code"
-											label="Code"
+											v-model="editedItem.description"
+											label="Desciption"
 										></v-text-field>
 									</v-col>
 								</v-row>
@@ -110,26 +110,26 @@
 
 <script lang="ts">
 	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-	import { CreateStateCommand, StatesClient } from "@/utils/Api";
+	import { CreateSportCommand, SportsClient } from "@/utils/Api";
 
 	@Component
-	export default class DataTable extends Vue {
-		name = "DataTable";
+	export default class Sport extends Vue {
+		name = "Sport";
 
 		@Prop()
 		entity;
 
 		constructor() {
 			super();
-			this.statesCient = new StatesClient();
+			this.sportsCient = new SportsClient();
 		}
 
-		statesCient: StatesClient;
+		sportsCient: SportsClient;
 		dialog = false;
 		dialogDelete = false;
 		headers = [
 			{ text: "Name", value: "name" },
-			{ text: "Code", value: "code" },		
+			{ text: "Description", value: "description" },		
 			{ text: "Actions", value: "actions", sortable: false },
 		];
 		items: any[] = [];
@@ -137,11 +137,11 @@
 		editedIndex = -1;
 		editedItem: any = {
 			name: "",
-			code: ""
+			description: ""
 		};
 		defaultItem: any = {
 			name: "",
-			code: ""
+			description: ""
 		};
 
 		get formTitle() {
@@ -149,7 +149,7 @@
 		}
 
 		mounted() {
-			this.statesCient.getAll().then((res) => {
+			this.sportsCient.getAll().then((res) => {
 				this.items = res;
 			});
 		}
@@ -176,10 +176,8 @@
 			this.dialogDelete = true;
 		}
 
-		deleteItemConfirm() {
-			console.log(this.editedItem)
-			console.log(this.items[this.editedIndex])
-			this.statesCient.delete(this.editedItem.id)
+		deleteItemConfirm() {			
+			this.sportsCient.delete(this.editedItem.id)
 			// this.editedIndex
 
 			this.items.splice(this.editedIndex, 1);
@@ -204,10 +202,10 @@
 
 		save() {
 			if (this.editedIndex > -1) {
-				this.statesCient.update(this.editedItem.id, this.editedItem)
+				this.sportsCient.update(this.editedItem.id, this.editedItem)
 				Object.assign(this.items[this.editedIndex], this.editedItem);
 			} else {
-				this.statesCient.create(this.editedItem)
+				this.sportsCient.create(this.editedItem)
 				this.items.push(this.editedItem);
 			}
 
