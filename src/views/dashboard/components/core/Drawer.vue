@@ -165,6 +165,11 @@
               to: '/statuses',
             }, 
             {
+              title: 'Teams',
+              icon: 'mdi-google-maps',
+              to: '/teams',
+            }, 
+            {
               title: 'Types',
               icon: 'mdi-clipboard-outline',
               to: '/types',

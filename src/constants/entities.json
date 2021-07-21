@@ -28,6 +28,10 @@
 		"plural": "Statuses"
 	},
 	{
+		"name": "Team",
+		"plural": "Teams"
+	},
+	{
 		"name": "Type",
 		"plural": "Types"
 	}	
