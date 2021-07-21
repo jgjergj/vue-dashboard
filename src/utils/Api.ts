@@ -1449,6 +1449,212 @@ export class StatusesClient {
     }
 }
 
+export class TeamsClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5001";
+    }
+
+    getAll(): Promise<TeamVM[]> {
+        let url_ = this.baseUrl + "/api/Teams";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAll(_response);
+        });
+    }
+
+    protected processGetAll(response: Response): Promise<TeamVM[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(TeamVM.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TeamVM[]>(<any>null);
+    }
+
+    create(command: CreateTeamCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/Teams";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreate(_response);
+        });
+    }
+
+    protected processCreate(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(<any>null);
+    }
+
+    update(id: number | undefined, command: UpdateTeamCommand): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/Teams?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdate(_response);
+        });
+    }
+
+    protected processUpdate(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+
+    get(id: number): Promise<TeamVM> {
+        let url_ = this.baseUrl + "/api/Teams/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGet(_response);
+        });
+    }
+
+    protected processGet(response: Response): Promise<TeamVM> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = TeamVM.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<TeamVM>(<any>null);
+    }
+
+    delete(id: number): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/Teams/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+}
+
 export class TypesClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -2673,6 +2879,158 @@ export interface IUpdateStatusCommand {
     id?: number;
     name?: string | undefined;
     environment?: string | undefined;
+}
+
+export class TeamVM implements ITeamVM {
+    id?: number;
+    name?: string | undefined;
+    state?: StateVM | undefined;
+    sport?: SportVM | undefined;
+    league?: LeagueVM | undefined;
+
+    constructor(data?: ITeamVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.state = _data["state"] ? StateVM.fromJS(_data["state"]) : <any>undefined;
+            this.sport = _data["sport"] ? SportVM.fromJS(_data["sport"]) : <any>undefined;
+            this.league = _data["league"] ? LeagueVM.fromJS(_data["league"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TeamVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new TeamVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
+        data["sport"] = this.sport ? this.sport.toJSON() : <any>undefined;
+        data["league"] = this.league ? this.league.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ITeamVM {
+    id?: number;
+    name?: string | undefined;
+    state?: StateVM | undefined;
+    sport?: SportVM | undefined;
+    league?: LeagueVM | undefined;
+}
+
+export class CreateTeamCommand implements ICreateTeamCommand {
+    name?: string | undefined;
+    stateId?: number;
+    sportId?: number;
+    leagueId?: number;
+
+    constructor(data?: ICreateTeamCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.stateId = _data["stateId"];
+            this.sportId = _data["sportId"];
+            this.leagueId = _data["leagueId"];
+        }
+    }
+
+    static fromJS(data: any): CreateTeamCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateTeamCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["stateId"] = this.stateId;
+        data["sportId"] = this.sportId;
+        data["leagueId"] = this.leagueId;
+        return data; 
+    }
+}
+
+export interface ICreateTeamCommand {
+    name?: string | undefined;
+    stateId?: number;
+    sportId?: number;
+    leagueId?: number;
+}
+
+export class UpdateTeamCommand implements IUpdateTeamCommand {
+    id?: number;
+    name?: string | undefined;
+    stateId?: number;
+    sportId?: number;
+    leagueId?: number;
+
+    constructor(data?: IUpdateTeamCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.stateId = _data["stateId"];
+            this.sportId = _data["sportId"];
+            this.leagueId = _data["leagueId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateTeamCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateTeamCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["stateId"] = this.stateId;
+        data["sportId"] = this.sportId;
+        data["leagueId"] = this.leagueId;
+        return data; 
+    }
+}
+
+export interface IUpdateTeamCommand {
+    id?: number;
+    name?: string | undefined;
+    stateId?: number;
+    sportId?: number;
+    leagueId?: number;
 }
 
 export class CreateTypeCommand implements ICreateTypeCommand {

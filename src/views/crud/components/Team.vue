@@ -2,8 +2,6 @@
 	<v-data-table
 		:headers="headers"
 		:items="items"
-		sort-by="calories"
-		class="elevation-1"
 	>
 		<template v-slot:top>
 			<v-toolbar flat>
@@ -30,8 +28,6 @@
 											label="Name"
 										></v-text-field>
 									</v-col>
-
-								
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
@@ -47,7 +43,6 @@
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-
 										<v-autocomplete
 											label="Sport"
 											:items="sports"
@@ -58,10 +53,8 @@
 										></v-autocomplete>
 									</v-col>
 								</v-row>
-								
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-
 										<v-autocomplete
 											label="League"
 											:items="leagues"
@@ -129,8 +122,10 @@
 		TeamsClient,
 		StatesClient,
 		SportsClient,
+		LeaguesClient,
 		StateVM,
 		SportVM,
+		LeagueVM,
 	} from "@/utils/Api";
 
 	@Component
