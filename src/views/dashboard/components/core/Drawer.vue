@@ -119,6 +119,11 @@
           icon: 'mdi-view-dashboard',
           title: 'dashboard',
           to: '/',
+        },
+        {
+          icon: 'mdi-bitcoin',
+          title: 'Bets',
+          to: '/bets',
         },   
         {
           icon: 'mdi-cog',
@@ -130,9 +135,19 @@
               to: '/clients',
             },
             {
+              title: 'Companies',
+              icon: 'mdi-account',
+              to: '/companies',
+            },
+            {
               title: 'Currencies',
               icon: 'mdi-account',
               to: '/currencies',
+            },
+            {
+              title: 'Leagues',
+              icon: 'mdi-account',
+              to: '/leagues',
             },
             {
               title: 'Sports',

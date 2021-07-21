@@ -37,7 +37,7 @@
 		constructor() {
 			super();
 			this.entity = entities.find(v => v.plural == this.$route.name)?.name;
-console.log(this.entity);
+			// console.log(this.entity);
 
 		}
 

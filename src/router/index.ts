@@ -21,14 +21,24 @@ const routes: Array<RouteConfig> = [
 				path: "",
 				component: () => import("@/views/dashboard/Dashboard.vue"),
 				async beforeEnter(to, from, next) {
-					const loggedIn = await AuthService.isLoggedIn();
-					if (loggedIn) {
-						next();
-					} else {
-						AuthService.login();
-					}
+					
+// todo: to be uncommented for authentication
+					// const loggedIn = await AuthService.isLoggedIn();
+					// if (loggedIn) {
+					// 	next();
+					// } else {
+					// 	AuthService.login();
+					// }
 				},
 			},
+			{
+				name: "Bets",
+				path: `/bets`,
+				component: () => import("@/views/Bet.vue"),
+				meta: {
+					isSecure: true,
+				}
+			}
 			// {
 			// 	name: "Crud",
 			// 	path: "/:crud",
@@ -94,20 +104,21 @@ const router = new VueRouter({
 	routes,
 });
 
-router.beforeEach((to, from, next) => {
-	if (to.matched.some((record) => record.meta.isSecure)) {
-		// this route requires auth, check if logged in
-		// if not, redirect to login page.
-		AuthService.isLoggedIn().then((isLoggedIn: boolean) => {
-			if (isLoggedIn) {
-				next();
-			} else {
-				next("/");
-			}
-		});
-	} else {
-		next();
-	}
-});
+// todo: to be uncommented for authentication
+// router.beforeEach((to, from, next) => {
+// 	if (to.matched.some((record) => record.meta.isSecure)) {
+// 		// this route requires auth, check if logged in
+// 		// if not, redirect to login page.
+// 		AuthService.isLoggedIn().then((isLoggedIn: boolean) => {
+// 			if (isLoggedIn) {
+// 				next();
+// 			} else {
+// 				next("/");
+// 			}
+// 		});
+// 	} else {
+// 		next();
+// 	}
+// });
 
 export default router;

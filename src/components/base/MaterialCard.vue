@@ -67,7 +67,6 @@
         class="ml-4"
       >
         <div
-
           class="card-title font-weight-light"
           v-text="title"
         />

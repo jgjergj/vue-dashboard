@@ -79,7 +79,8 @@
 	import AuthService from "@/utils/AuthService";
 
 	// Components
-	import { VHover, VListItem } from "vuetify/lib";
+	import  VHover from "vuetify";
+	import  VListItem from "vuetify";
 
 
 	@Component({

@@ -52,18 +52,35 @@
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.surname"
-											label="Surname"
-										></v-text-field>
+										<!-- <v-text-field
+											v-model="editedItem.state"
+											label="State"
+										></v-text-field> -->
+										<v-autocomplete
+											label="State"
+											:items="states"
+											v-model="editedItem.state"
+											item-text="name"
+											item-value="id"
+											return-object
+										></v-autocomplete>
 									</v-col>
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.balance"
-											label="Balance"
-										></v-text-field>
+										<!-- <v-text-field
+											v-model="editedItem.sport"
+											label="Sport"
+										></v-text-field> -->
+
+										<v-autocomplete
+											label="Sport"
+											:items="sports"
+											v-model="editedItem.sport"
+											item-text="name"
+											item-value="id"
+											return-object
+										></v-autocomplete>
 									</v-col>
 								</v-row>
 							</v-container>
@@ -118,27 +135,38 @@
 
 <script lang="ts">
 	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-	import { ClientsClient } from "@/utils/Api";
+	import {
+		CreateLeagueCommand,
+		LeaguesClient,
+		StatesClient,
+		SportsClient,
+		StateVM,
+		SportVM,
+	} from "@/utils/Api";
 
 	@Component
-	export default class Client extends Vue {
-		name = "Client";
+	export default class League extends Vue {
+		name = "League";
 
 		@Prop()
 		entity;
 
 		constructor() {
 			super();
-			this.clientsClient = new ClientsClient();
+			this.leaguesCient = new LeaguesClient();
+			this.statesClient = new StatesClient();
+			this.sportsClient = new SportsClient();
 		}
 
-		clientsClient: ClientsClient;
+		leaguesCient: LeaguesClient;
+		statesClient: StatesClient;
+		sportsClient: SportsClient;
 		dialog = false;
 		dialogDelete = false;
 		headers = [
 			{ text: "Name", value: "name" },
-			{ text: "Surname", value: "surname" },
-			{ text: "Balance", value: "balance" },
+			{ text: "State", value: "state.name" },
+			{ text: "Sport", value: "sport.name" },
 			{ text: "Actions", value: "actions", sortable: false },
 		];
 		items: any[] = [];
@@ -146,21 +174,31 @@
 		editedIndex = -1;
 		editedItem: any = {
 			name: "",
-			surname: "",
-			balance: 0,
+			stateId: StateVM,
+			sportId: SportVM,
 		};
 		defaultItem: any = {
 			name: "",
-			surname: "",
-			balance: 0,
+			stateId: StateVM,
+			sportId: SportVM,
 		};
+
+		states: any[] = [];
+		sports: any[] = [];
 
 		get formTitle() {
 			return this.editedIndex === -1 ? "New Item" : "Edit Item";
 		}
 
+		async created(): Promise<void> {
+			[this.states, this.sports] = await Promise.all([
+				this.statesClient.getAll(),
+				this.sportsClient.getAll(),
+			]);
+		}
+
 		mounted() {
-			this.clientsClient.getAll().then((res) => {
+			this.leaguesCient.getAll().then((res) => {
 				this.items = res;
 			});
 		}
@@ -188,7 +226,9 @@
 		}
 
 		deleteItemConfirm() {
-			this.clientsClient.delete(this.editedItem.id);
+			// console.log(this.editedItem);
+			// console.log(this.items[this.editedIndex]);
+			this.leaguesCient.delete(this.editedItem.id);
 			// this.editedIndex
 
 			this.items.splice(this.editedIndex, 1);
@@ -212,11 +252,18 @@
 		}
 
 		save() {
+			const editItem: any = {
+				id: this.editedItem.id,
+				name: this.editedItem.name,
+				sportId: this.editedItem.sport.id,
+				stateId: this.editedItem.state.id,
+			};
+
 			if (this.editedIndex > -1) {
-				this.clientsClient.update(this.editedItem.id, this.editedItem);
+				this.leaguesCient.update(this.editedItem.id, editItem);
 				Object.assign(this.items[this.editedIndex], this.editedItem);
 			} else {
-				this.clientsClient.create(this.editedItem);
+				this.leaguesCient.create(editItem);
 				this.items.push(this.editedItem);
 			}
 

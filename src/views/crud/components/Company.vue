@@ -30,40 +30,33 @@
 											label="Name"
 										></v-text-field>
 									</v-col>
-
-									<!-- <v-col cols="12" sm="6" md="4">
-										<v-text-field
-											v-model="editedItem.fat"
-											label="Fat (g)"
-										></v-text-field>
-									</v-col>
-									<v-col cols="12" sm="6" md="4">
-										<v-text-field
-											v-model="editedItem.carbs"
-											label="Carbs (g)"
-										></v-text-field>
-									</v-col>
-									<v-col cols="12" sm="6" md="4">
-										<v-text-field
-											v-model="editedItem.protein"
-											label="Protein (g)"
-										></v-text-field>
-									</v-col> -->
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
 										<v-text-field
-											v-model="editedItem.surname"
-											label="Surname"
+											v-model="editedItem.description"
+											label="Description"
 										></v-text-field>
 									</v-col>
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
 										<v-text-field
-											v-model="editedItem.balance"
-											label="Balance"
+											v-model="editedItem.loginLink"
+											label="Login Link"
 										></v-text-field>
+									</v-col>
+								</v-row>
+								<v-row>
+									<v-col cols="12" sm="12" md="12">
+										<v-autocomplete
+											label="Type"
+											:items="types"
+											v-model="editedItem.type"
+											item-text="name"
+											item-value="id"
+											return-object
+										></v-autocomplete>
 									</v-col>
 								</v-row>
 							</v-container>
@@ -113,32 +106,43 @@
 				Reset
 			</v-btn>
 		</template> -->
+		<template v-slot:[`item.loginLink`]="{ item }">
+			<a :href="'https://' + item.loginLink" v-html="item.loginLink" target="_blank"></a>
+		</template>
 	</v-data-table>
 </template>
 
 <script lang="ts">
 	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-	import { ClientsClient } from "@/utils/Api";
+	import {
+		CreateCompanyCommand,
+		CompaniesClient,
+		TypesClient,
+		TypeVM,
+	} from "@/utils/Api";
 
 	@Component
-	export default class Client extends Vue {
-		name = "Client";
+	export default class Company extends Vue {
+		name = "Company";
 
 		@Prop()
 		entity;
 
 		constructor() {
 			super();
-			this.clientsClient = new ClientsClient();
+			this.companiesCient = new CompaniesClient();
+			this.typesClient = new TypesClient();
 		}
 
-		clientsClient: ClientsClient;
+		companiesCient: CompaniesClient;
+		typesClient: TypesClient;
 		dialog = false;
 		dialogDelete = false;
 		headers = [
 			{ text: "Name", value: "name" },
-			{ text: "Surname", value: "surname" },
-			{ text: "Balance", value: "balance" },
+			{ text: "Description", value: "description" },
+			{ text: "Login Link", value: "loginLink" },
+			{ text: "Type", value: "type.name" },
 			{ text: "Actions", value: "actions", sortable: false },
 		];
 		items: any[] = [];
@@ -146,21 +150,25 @@
 		editedIndex = -1;
 		editedItem: any = {
 			name: "",
-			surname: "",
-			balance: 0,
+			typeId: TypeVM,
 		};
 		defaultItem: any = {
 			name: "",
-			surname: "",
-			balance: 0,
+			typeId: TypeVM,
 		};
+
+		types: any[] = [];
 
 		get formTitle() {
 			return this.editedIndex === -1 ? "New Item" : "Edit Item";
 		}
 
+		async created(): Promise<void> {
+			this.types = await this.typesClient.getAll();
+		}
+
 		mounted() {
-			this.clientsClient.getAll().then((res) => {
+			this.companiesCient.getAll().then((res) => {
 				this.items = res;
 			});
 		}
@@ -188,7 +196,9 @@
 		}
 
 		deleteItemConfirm() {
-			this.clientsClient.delete(this.editedItem.id);
+			// console.log(this.editedItem);
+			// console.log(this.items[this.editedIndex]);
+			this.companiesCient.delete(this.editedItem.id);
 			// this.editedIndex
 
 			this.items.splice(this.editedIndex, 1);
@@ -212,11 +222,19 @@
 		}
 
 		save() {
+			const editItem: any = {
+				id: this.editedItem.id,
+				name: this.editedItem.name,
+				description: this.editedItem.description,
+				loginLink: this.editedItem.loginLink,
+				typeId: this.editedItem.type.id,
+			};
+
 			if (this.editedIndex > -1) {
-				this.clientsClient.update(this.editedItem.id, this.editedItem);
+				this.companiesCient.update(this.editedItem.id, editItem);
 				Object.assign(this.items[this.editedIndex], this.editedItem);
 			} else {
-				this.clientsClient.create(this.editedItem);
+				this.companiesCient.create(editItem);
 				this.items.push(this.editedItem);
 			}
 

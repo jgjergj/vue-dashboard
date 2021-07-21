@@ -4,8 +4,16 @@
 		"plural": "Clients"
 	},
 	{
+		"name": "Company",
+		"plural": "Companies"
+	},
+	{
 		"name": "Currency",
 		"plural": "Currencies"
+	},
+	{
+		"name": "League",
+		"plural": "Leagues"
 	},
 	{
 		"name": "Sport",
