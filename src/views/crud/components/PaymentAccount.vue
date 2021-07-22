@@ -195,7 +195,6 @@
 <script lang="ts">
 	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
 	import {
-		CreateLeagueCommand,
 		PaymentAccountsClient,
 		StatusesClient,
 		StatesClient,
@@ -206,8 +205,8 @@
 	} from "@/utils/Api";
 
 	@Component
-	export default class League extends Vue {
-		name = "League";
+	export default class PaymentAccount extends Vue {
+		name = "Payment Account";
 
 		@Prop()
 		entity;
@@ -259,7 +258,7 @@
 		}
 
 		async created(): Promise<void> {
-			[this.states, this.sports] = await Promise.all([
+			[this.states, this.companies, this.statuses] = await Promise.all([
 				this.statesClient.getAll(),
 				this.companiesClient.getAll(),
 				this.statusesClient.getAll(),
