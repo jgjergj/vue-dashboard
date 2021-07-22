@@ -16,6 +16,10 @@
 		"plural": "Leagues"
 	},
 	{
+		"name": "PaymentAccount",
+		"plural": "PaymentAccounts"
+	},
+	{
 		"name": "Sport",
 		"plural": "Sports"
 	},	
