@@ -565,8 +565,8 @@
 			"base-material-card": MaterialCard,
 		},
 	})
-	export default class Bet extends Vue {
-		name = "Bet";
+	export default class Bets extends Vue {
+		name = "Bets";
 
 		@Prop()
 		entity;
