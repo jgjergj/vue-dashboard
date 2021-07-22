@@ -1078,6 +1078,212 @@ export class OperatorsClient {
     }
 }
 
+export class PaymentAccountsClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5001";
+    }
+
+    getAll(): Promise<PaymentAccountVM[]> {
+        let url_ = this.baseUrl + "/api/PaymentAccounts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAll(_response);
+        });
+    }
+
+    protected processGetAll(response: Response): Promise<PaymentAccountVM[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(PaymentAccountVM.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PaymentAccountVM[]>(<any>null);
+    }
+
+    create(command: CreatePaymentAccountCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/PaymentAccounts";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreate(_response);
+        });
+    }
+
+    protected processCreate(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(<any>null);
+    }
+
+    update(id: number | undefined, command: UpdatePaymentAccountCommand): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/PaymentAccounts?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdate(_response);
+        });
+    }
+
+    protected processUpdate(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+
+    get(id: number): Promise<PaymentAccountVM> {
+        let url_ = this.baseUrl + "/api/PaymentAccounts/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGet(_response);
+        });
+    }
+
+    protected processGet(response: Response): Promise<PaymentAccountVM> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PaymentAccountVM.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<PaymentAccountVM>(<any>null);
+    }
+
+    delete(id: number): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/PaymentAccounts/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+}
+
 export class SportsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -2836,7 +3042,6 @@ export class OperatorVM implements IOperatorVM {
     id?: number;
     name?: string | undefined;
     balance?: number;
-    clients?: ClientVM[] | undefined;
 
     constructor(data?: IOperatorVM) {
         if (data) {
@@ -2852,11 +3057,6 @@ export class OperatorVM implements IOperatorVM {
             this.id = _data["id"];
             this.name = _data["name"];
             this.balance = _data["balance"];
-            if (Array.isArray(_data["clients"])) {
-                this.clients = [] as any;
-                for (let item of _data["clients"])
-                    this.clients!.push(ClientVM.fromJS(item));
-            }
         }
     }
 
@@ -2872,11 +3072,6 @@ export class OperatorVM implements IOperatorVM {
         data["id"] = this.id;
         data["name"] = this.name;
         data["balance"] = this.balance;
-        if (Array.isArray(this.clients)) {
-            data["clients"] = [];
-            for (let item of this.clients)
-                data["clients"].push(item.toJSON());
-        }
         return data; 
     }
 }
@@ -2885,7 +3080,6 @@ export interface IOperatorVM {
     id?: number;
     name?: string | undefined;
     balance?: number;
-    clients?: ClientVM[] | undefined;
 }
 
 export class CreateOperatorCommand implements ICreateOperatorCommand {
@@ -2982,6 +3176,306 @@ export interface IUpdateOperatorCommand {
     id?: number;
     name?: string | undefined;
     balance?: number;
+}
+
+export class PaymentAccountVM implements IPaymentAccountVM {
+    id?: number;
+    sport?: SportVM | undefined;
+    company?: CompanyVM | undefined;
+    username?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    state?: StateVM | undefined;
+    status?: StatusVM | undefined;
+    balance?: number;
+    name?: string | undefined;
+    surname?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    documentExpiry?: Date;
+
+    constructor(data?: IPaymentAccountVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.sport = _data["sport"] ? SportVM.fromJS(_data["sport"]) : <any>undefined;
+            this.company = _data["company"] ? CompanyVM.fromJS(_data["company"]) : <any>undefined;
+            this.username = _data["username"];
+            this.email = _data["email"];
+            this.password = _data["password"];
+            this.state = _data["state"] ? StateVM.fromJS(_data["state"]) : <any>undefined;
+            this.status = _data["status"] ? StatusVM.fromJS(_data["status"]) : <any>undefined;
+            this.balance = _data["balance"];
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.address = _data["address"];
+            this.phone = _data["phone"];
+            this.documentExpiry = _data["documentExpiry"] ? new Date(_data["documentExpiry"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): PaymentAccountVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaymentAccountVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sport"] = this.sport ? this.sport.toJSON() : <any>undefined;
+        data["company"] = this.company ? this.company.toJSON() : <any>undefined;
+        data["username"] = this.username;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
+        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
+        data["balance"] = this.balance;
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["documentExpiry"] = this.documentExpiry ? this.documentExpiry.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IPaymentAccountVM {
+    id?: number;
+    sport?: SportVM | undefined;
+    company?: CompanyVM | undefined;
+    username?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    state?: StateVM | undefined;
+    status?: StatusVM | undefined;
+    balance?: number;
+    name?: string | undefined;
+    surname?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    documentExpiry?: Date;
+}
+
+export class StatusVM implements IStatusVM {
+    id?: number;
+    name?: string | undefined;
+    environment?: string | undefined;
+
+    constructor(data?: IStatusVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.environment = _data["environment"];
+        }
+    }
+
+    static fromJS(data: any): StatusVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new StatusVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["environment"] = this.environment;
+        return data; 
+    }
+}
+
+export interface IStatusVM {
+    id?: number;
+    name?: string | undefined;
+    environment?: string | undefined;
+}
+
+export class CreatePaymentAccountCommand implements ICreatePaymentAccountCommand {
+    id?: number;
+    companyId?: number;
+    username?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    stateId?: number;
+    statusId?: number;
+    balance?: number;
+    name?: string | undefined;
+    surname?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    documentExpiry?: Date;
+
+    constructor(data?: ICreatePaymentAccountCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.companyId = _data["companyId"];
+            this.username = _data["username"];
+            this.email = _data["email"];
+            this.password = _data["password"];
+            this.stateId = _data["stateId"];
+            this.statusId = _data["statusId"];
+            this.balance = _data["balance"];
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.address = _data["address"];
+            this.phone = _data["phone"];
+            this.documentExpiry = _data["documentExpiry"] ? new Date(_data["documentExpiry"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): CreatePaymentAccountCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreatePaymentAccountCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["companyId"] = this.companyId;
+        data["username"] = this.username;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        data["stateId"] = this.stateId;
+        data["statusId"] = this.statusId;
+        data["balance"] = this.balance;
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["documentExpiry"] = this.documentExpiry ? this.documentExpiry.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ICreatePaymentAccountCommand {
+    id?: number;
+    companyId?: number;
+    username?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    stateId?: number;
+    statusId?: number;
+    balance?: number;
+    name?: string | undefined;
+    surname?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    documentExpiry?: Date;
+}
+
+export class UpdatePaymentAccountCommand implements IUpdatePaymentAccountCommand {
+    id?: number;
+    companyId?: number;
+    username?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    stateId?: number;
+    statusId?: number;
+    balance?: number;
+    name?: string | undefined;
+    surname?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    documentExpiry?: Date;
+
+    constructor(data?: IUpdatePaymentAccountCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.companyId = _data["companyId"];
+            this.username = _data["username"];
+            this.email = _data["email"];
+            this.password = _data["password"];
+            this.stateId = _data["stateId"];
+            this.statusId = _data["statusId"];
+            this.balance = _data["balance"];
+            this.name = _data["name"];
+            this.surname = _data["surname"];
+            this.address = _data["address"];
+            this.phone = _data["phone"];
+            this.documentExpiry = _data["documentExpiry"] ? new Date(_data["documentExpiry"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdatePaymentAccountCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdatePaymentAccountCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["companyId"] = this.companyId;
+        data["username"] = this.username;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        data["stateId"] = this.stateId;
+        data["statusId"] = this.statusId;
+        data["balance"] = this.balance;
+        data["name"] = this.name;
+        data["surname"] = this.surname;
+        data["address"] = this.address;
+        data["phone"] = this.phone;
+        data["documentExpiry"] = this.documentExpiry ? this.documentExpiry.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdatePaymentAccountCommand {
+    id?: number;
+    companyId?: number;
+    username?: string | undefined;
+    email?: string | undefined;
+    password?: string | undefined;
+    stateId?: number;
+    statusId?: number;
+    balance?: number;
+    name?: string | undefined;
+    surname?: string | undefined;
+    address?: string | undefined;
+    phone?: string | undefined;
+    documentExpiry?: Date;
 }
 
 export class CreateSportCommand implements ICreateSportCommand {
@@ -3150,50 +3644,6 @@ export interface IUpdateStateCommand {
     id?: number;
     name?: string | undefined;
     code?: string | undefined;
-}
-
-export class StatusVM implements IStatusVM {
-    id?: number;
-    name?: string | undefined;
-    environment?: string | undefined;
-
-    constructor(data?: IStatusVM) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.environment = _data["environment"];
-        }
-    }
-
-    static fromJS(data: any): StatusVM {
-        data = typeof data === 'object' ? data : {};
-        let result = new StatusVM();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["environment"] = this.environment;
-        return data; 
-    }
-}
-
-export interface IStatusVM {
-    id?: number;
-    name?: string | undefined;
-    environment?: string | undefined;
 }
 
 export class CreateStatusCommand implements ICreateStatusCommand {

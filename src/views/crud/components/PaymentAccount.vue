@@ -23,10 +23,14 @@
 							<v-container>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.company"
+										<v-autocomplete
 											label="Company"
-										></v-text-field>
+											:items="companies"
+											v-model="editedItem.company"
+											item-text="name"
+											item-value="id"
+											return-object
+										></v-autocomplete>
 									</v-col>
 								</v-row>
 								<v-row>
@@ -55,18 +59,26 @@
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.state"
+										<v-autocomplete
 											label="State"
-										></v-text-field>
+											:items="states"
+											v-model="editedItem.state"
+											item-text="name"
+											item-value="id"
+											return-object
+										></v-autocomplete>
 									</v-col>
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.status"
+										<v-autocomplete
 											label="Status"
-										></v-text-field>
+											:items="statuses"
+											v-model="editedItem.status"
+											item-text="name"
+											item-value="id"
+											return-object
+										></v-autocomplete>
 									</v-col>
 								</v-row>
 								<v-row>
@@ -116,32 +128,7 @@
 											label="Document Expiry"
 										></v-text-field>
 									</v-col>
-								</v-row>
-
-								<v-row>
-									<v-col cols="12" sm="12" md="12">
-										<v-autocomplete
-											label="State"
-											:items="states"
-											v-model="editedItem.state"
-											item-text="name"
-											item-value="id"
-											return-object
-										></v-autocomplete>
-									</v-col>
-								</v-row>
-								<v-row>
-									<v-col cols="12" sm="12" md="12">
-										<v-autocomplete
-											label="Sport"
-											:items="sports"
-											v-model="editedItem.sport"
-											item-text="name"
-											item-value="id"
-											return-object
-										></v-autocomplete>
-									</v-col>
-								</v-row>
+								</v-row>																
 							</v-container>
 						</v-card-text>
 
@@ -213,24 +200,32 @@
 
 		constructor() {
 			super();
-			this.paymentAccountsClient = new PaymentAccounsClient();
+			this.paymentAccountsClient = new PaymentAccountsClient();
 			this.statesClient = new StatesClient();
 			this.companiesClient = new CompaniesClient();
 			this.statusesClient = new StatusesClient();
 
 		}
 
-		paymentAccountsClient: PaymentAccounsClient;
+		paymentAccountsClient: PaymentAccountsClient;
 		statesClient: StatesClient;
 		companiesClient: CompaniesClient;
 		statusesClient: StatusesClient;
 		dialog = false;
 		dialogDelete = false;
 		headers = [
-			{ text: "Name", value: "name" },
-			{ text: "State", value: "state.name" },
 			{ text: "Company", value: "company.name" },
+			{ text: "Username", value: "username" },
+			{ text: "Email", value: "email" },
+			{ text: "Password", value: "password" },
+			{ text: "State", value: "state.name" },
 			{ text: "Status", value: "status.name" },
+			{ text: "Balance", value: "balance" },
+			{ text: "Name", value: "name" },
+			{ text: "Surname", value: "surname" },
+			{ text: "Address", value: "address" },
+			{ text: "Phone", value: "phone" },
+			{ text: "Document Expiry", value: "documentExpiry" },
 			{ text: "Actions", value: "actions", sortable: false },
 		];
 		items: any[] = [];
@@ -322,10 +317,18 @@
 		save() {
 			const editItem: any = {
 				id: this.editedItem.id,
-				name: this.editedItem.name,
 				companyId: this.editedItem.company.id,
+				username: this.editedItem.username,
+				email: this.editedItem.email,
+				password: this.editedItem.password,
 				stateId: this.editedItem.state.id,
 				statusId: this.editedItem.status.id,
+				balance: this.editedItem.balance,
+				name: this.editedItem.name,
+				surname: this.editedItem.surname,
+				address: this.editedItem.address,
+				phone: this.editedItem.phone,
+				documentExpiry: this.editedItem.documentExpiry
 			};
 
 			if (this.editedIndex > -1) {
