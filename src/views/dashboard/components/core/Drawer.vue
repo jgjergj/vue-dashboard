@@ -124,6 +124,11 @@
           icon: 'mdi-bitcoin',
           title: 'Bets',
           to: '/bets',
+        }, 
+        {
+          icon: 'mdi-account-search',
+          title: 'Operators',
+          to: '/operators',
         },   
         {
           icon: 'mdi-cog',
