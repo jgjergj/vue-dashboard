@@ -155,6 +155,11 @@
               to: '/leagues',
             },
             {
+              title: 'Payment Account',
+              icon: 'mdi-account',
+              to: '/paymentAccounts',
+            },
+            {
               title: 'Sports',
               icon: 'mdi-google-maps',
               to: '/sports',

@@ -20,6 +20,10 @@
 		"plural": "Operators"
 	},
 	{
+		"name": "PaymentAccount",
+		"plural": "PaymentAccounts"
+	},
+	{
 		"name": "Sport",
 		"plural": "Sports"
 	},	
