@@ -666,6 +666,212 @@ export class CurrenciesClient {
     }
 }
 
+export class DepartmentsClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5001";
+    }
+
+    getAll(): Promise<DepartmentVM[]> {
+        let url_ = this.baseUrl + "/api/Departments";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAll(_response);
+        });
+    }
+
+    protected processGetAll(response: Response): Promise<DepartmentVM[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(DepartmentVM.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<DepartmentVM[]>(<any>null);
+    }
+
+    create(command: CreateDepartmentCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/Departments";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreate(_response);
+        });
+    }
+
+    protected processCreate(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(<any>null);
+    }
+
+    update(id: number | undefined, command: UpdateDepartmentCommand): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/Departments?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdate(_response);
+        });
+    }
+
+    protected processUpdate(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+
+    get(id: number): Promise<DepartmentVM> {
+        let url_ = this.baseUrl + "/api/Departments/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGet(_response);
+        });
+    }
+
+    protected processGet(response: Response): Promise<DepartmentVM> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = DepartmentVM.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<DepartmentVM>(<any>null);
+    }
+
+    delete(id: number): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/Departments/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+}
+
 export class LeaguesClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -1075,6 +1281,47 @@ export class OperatorsClient {
             });
         }
         return Promise.resolve<Unit>(<any>null);
+    }
+
+    getOperatorsWithNoDepartment(): Promise<OperatorVM[]> {
+        let url_ = this.baseUrl + "/api/Operators/Unassigned";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetOperatorsWithNoDepartment(_response);
+        });
+    }
+
+    protected processGetOperatorsWithNoDepartment(response: Response): Promise<OperatorVM[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(OperatorVM.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<OperatorVM[]>(<any>null);
     }
 }
 
@@ -2810,6 +3057,146 @@ export interface IUpdateCurrencyCommand {
     code?: string | undefined;
 }
 
+export class DepartmentVM implements IDepartmentVM {
+    id?: number;
+    name?: string | undefined;
+    balance?: number;
+
+    constructor(data?: IDepartmentVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.balance = _data["balance"];
+        }
+    }
+
+    static fromJS(data: any): DepartmentVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new DepartmentVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["balance"] = this.balance;
+        return data; 
+    }
+}
+
+export interface IDepartmentVM {
+    id?: number;
+    name?: string | undefined;
+    balance?: number;
+}
+
+export class CreateDepartmentCommand implements ICreateDepartmentCommand {
+    name?: string | undefined;
+    balance?: number;
+    operators?: number[] | undefined;
+
+    constructor(data?: ICreateDepartmentCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.balance = _data["balance"];
+            if (Array.isArray(_data["operators"])) {
+                this.operators = [] as any;
+                for (let item of _data["operators"])
+                    this.operators!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateDepartmentCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateDepartmentCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["balance"] = this.balance;
+        if (Array.isArray(this.operators)) {
+            data["operators"] = [];
+            for (let item of this.operators)
+                data["operators"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ICreateDepartmentCommand {
+    name?: string | undefined;
+    balance?: number;
+    operators?: number[] | undefined;
+}
+
+export class UpdateDepartmentCommand implements IUpdateDepartmentCommand {
+    id?: number;
+    name?: string | undefined;
+    balance?: number;
+
+    constructor(data?: IUpdateDepartmentCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.balance = _data["balance"];
+        }
+    }
+
+    static fromJS(data: any): UpdateDepartmentCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateDepartmentCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["balance"] = this.balance;
+        return data; 
+    }
+}
+
+export interface IUpdateDepartmentCommand {
+    id?: number;
+    name?: string | undefined;
+    balance?: number;
+}
+
 export class LeagueVM implements ILeagueVM {
     id?: number;
     name?: string | undefined;
@@ -3042,6 +3429,7 @@ export class OperatorVM implements IOperatorVM {
     id?: number;
     name?: string | undefined;
     balance?: number;
+    department?: DepartmentVM | undefined;
 
     constructor(data?: IOperatorVM) {
         if (data) {
@@ -3057,6 +3445,7 @@ export class OperatorVM implements IOperatorVM {
             this.id = _data["id"];
             this.name = _data["name"];
             this.balance = _data["balance"];
+            this.department = _data["department"] ? DepartmentVM.fromJS(_data["department"]) : <any>undefined;
         }
     }
 
@@ -3072,6 +3461,7 @@ export class OperatorVM implements IOperatorVM {
         data["id"] = this.id;
         data["name"] = this.name;
         data["balance"] = this.balance;
+        data["department"] = this.department ? this.department.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -3080,11 +3470,13 @@ export interface IOperatorVM {
     id?: number;
     name?: string | undefined;
     balance?: number;
+    department?: DepartmentVM | undefined;
 }
 
 export class CreateOperatorCommand implements ICreateOperatorCommand {
     name?: string | undefined;
     balance?: number;
+    departmentId?: number;
     clients?: number[] | undefined;
 
     constructor(data?: ICreateOperatorCommand) {
@@ -3100,6 +3492,7 @@ export class CreateOperatorCommand implements ICreateOperatorCommand {
         if (_data) {
             this.name = _data["name"];
             this.balance = _data["balance"];
+            this.departmentId = _data["departmentId"];
             if (Array.isArray(_data["clients"])) {
                 this.clients = [] as any;
                 for (let item of _data["clients"])
@@ -3119,6 +3512,7 @@ export class CreateOperatorCommand implements ICreateOperatorCommand {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["balance"] = this.balance;
+        data["departmentId"] = this.departmentId;
         if (Array.isArray(this.clients)) {
             data["clients"] = [];
             for (let item of this.clients)
@@ -3131,6 +3525,7 @@ export class CreateOperatorCommand implements ICreateOperatorCommand {
 export interface ICreateOperatorCommand {
     name?: string | undefined;
     balance?: number;
+    departmentId?: number;
     clients?: number[] | undefined;
 }
 
@@ -3138,6 +3533,7 @@ export class UpdateOperatorCommand implements IUpdateOperatorCommand {
     id?: number;
     name?: string | undefined;
     balance?: number;
+    departmentId?: number;
 
     constructor(data?: IUpdateOperatorCommand) {
         if (data) {
@@ -3153,6 +3549,7 @@ export class UpdateOperatorCommand implements IUpdateOperatorCommand {
             this.id = _data["id"];
             this.name = _data["name"];
             this.balance = _data["balance"];
+            this.departmentId = _data["departmentId"];
         }
     }
 
@@ -3168,6 +3565,7 @@ export class UpdateOperatorCommand implements IUpdateOperatorCommand {
         data["id"] = this.id;
         data["name"] = this.name;
         data["balance"] = this.balance;
+        data["departmentId"] = this.departmentId;
         return data; 
     }
 }
@@ -3176,6 +3574,7 @@ export interface IUpdateOperatorCommand {
     id?: number;
     name?: string | undefined;
     balance?: number;
+    departmentId?: number;
 }
 
 export class PaymentAccountVM implements IPaymentAccountVM {

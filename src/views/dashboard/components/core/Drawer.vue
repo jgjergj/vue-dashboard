@@ -126,10 +126,15 @@
           to: '/bets',
         }, 
         {
+          icon: 'mdi-office-building',
+          title: 'Departments',
+          to: '/departments',
+        }, 
+        {
           icon: 'mdi-account-search',
           title: 'Operators',
           to: '/operators',
-        },   
+        },     
         {
           icon: 'mdi-cog',
           title: 'Settings',

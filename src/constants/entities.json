@@ -12,6 +12,10 @@
 		"plural": "Currencies"
 	},
 	{
+		"name": "Department",
+		"plural": "Departments"
+	},
+	{
 		"name": "League",
 		"plural": "Leagues"
 	},	
