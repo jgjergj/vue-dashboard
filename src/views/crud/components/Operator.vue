@@ -41,14 +41,18 @@
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<!-- <v-autocomplete
-											label="Client"
-											:items="clients"
-											v-model="editedItem.client"
+										<v-autocomplete
+											label="Department"
+											:items="departments"
+											v-model="editedItem.department"
 											item-text="name"
 											item-value="id"
 											return-object
-										></v-autocomplete> -->
+										></v-autocomplete>
+									</v-col>
+								</v-row>
+								<v-row>
+									<v-col cols="12" sm="12" md="12">
 										<v-autocomplete
 											label="Client"
 											:items="clients"
@@ -113,7 +117,7 @@
 
 <script lang="ts">
 	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
-	import { OperatorsClient, ClientsClient } from "@/utils/Api";
+	import { OperatorsClient, ClientsClient, DepartmentsClient, DepartmentVM } from "@/utils/Api";
 
 	@Component
 	export default class Operator extends Vue {
@@ -126,15 +130,18 @@
 			super();
 			this.operatorsCient = new OperatorsClient();
 			this.clientsClient = new ClientsClient();
+			this.departmentsClient = new DepartmentsClient();
 		}
 
 		operatorsCient: OperatorsClient;
 		clientsClient: ClientsClient;
+		departmentsClient: DepartmentsClient;
 		dialog = false;
 		dialogDelete = false;
 		headers = [
 			{ text: "Name", value: "name" },
 			{ text: "Balance", value: "balance" },
+			{ text: "Department", value: "department.name" },
 			{ text: "Actions", value: "actions", sortable: false },
 		];
 		items: any[] = [];
@@ -142,23 +149,29 @@
 		editedIndex = -1;
 		editedItem: any = {
 			name: "",
+			departmentId: DepartmentVM,
 			clients: [],
 			clientsData: [],
 		};
 		defaultItem: any = {
 			name: "",
+			departmentId: DepartmentVM,
 			clients: [],
 			clientsData: [],
 		};
 
 		clients: any[] = [];
+		departments: any[] = [];
 
 		get formTitle() {
 			return this.editedIndex === -1 ? "New Item" : "Edit Item";
 		}
 
 		async created(): Promise<void> {
-			this.clients = await this.clientsClient.getClientsWithNoOperator();
+			[this.clients, this.departments] = await Promise.all([
+				this.clientsClient.getClientsWithNoOperator(),
+				this.departmentsClient.getAll()
+			]);
 		}
 
 		mounted() {
@@ -220,6 +233,7 @@
 				id: this.editedItem.id,
 				name: this.editedItem.name,
 				balance: this.editedItem.balance,
+				departmentId: this.editedItem.department.id,
 				clients: this.editedItem.clientsData.map(c => c.id)
 			};
 
