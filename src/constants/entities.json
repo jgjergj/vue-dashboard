@@ -1,5 +1,9 @@
 [
 	{
+		"name": "Account",
+		"plural": "Accounts"
+	},
+	{
 		"name": "Client",
 		"plural": "Clients"
 	},
