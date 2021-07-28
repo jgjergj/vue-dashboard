@@ -1,8 +1,8 @@
 <template>
 	<div>
 		<router-view :key="$route.name" />
-		<v-btn @click="login">Login</v-btn>
-		<v-btn @click="getStates">Get States</v-btn>
+		<!-- <v-btn @click="login">Login</v-btn>
+		<v-btn @click="getStates">Get States</v-btn> -->
 	</div>
 </template>
 
@@ -70,10 +70,10 @@
 			// }
 		}
 
-		public async login(): Promise<any> {
-			AuthService.login();
-			// return this.userManager.signinRedirect();
-		}
+		// public async login(): Promise<any> {
+		// 	AuthService.login();
+		// 	// return this.userManager.signinRedirect();
+		// }
 
 		public mounted() {
 			// auth.getUser().then((user) => {
@@ -86,9 +86,9 @@
 			// });
 		}
 
-		public async getStates(): Promise<void> {
-			const statesCient = new StatesClient()
-			// console.log(await statesCient.get());
-		}
+		// public async getStates(): Promise<void> {
+		// 	const statesCient = new StatesClient()
+		// 	// console.log(await statesCient.get());
+		// }
 	}
 </script>

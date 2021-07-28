@@ -11,25 +11,25 @@ const routes: Array<RouteConfig> = [
 		path: "/",
 		component: () => import("@/views/dashboard/Home.vue"),
 		children: [
-			{
-				path: "/oidc-callback", // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
-				name: "oidcCallback",
-				component: OidcCallback,
-			},
+			// {
+			// 	path: "/oidc-callback", // Needs to match redirectUri (redirect_uri if you use snake case) in you oidcSettings
+			// 	name: "oidcCallback",
+			// 	component: OidcCallback,
+			// },
 			{
 				name: "Dashboard",
 				path: "",
 				component: () => import("@/views/dashboard/Dashboard.vue"),
-				async beforeEnter(to, from, next) {
+				// async beforeEnter(to, from, next) {
 					
-// todo: to be uncommented for authentication
-					// const loggedIn = await AuthService.isLoggedIn();
-					// if (loggedIn) {
-					// 	next();
-					// } else {
-					// 	AuthService.login();
-					// }
-				},
+				// 	// todo: to be uncommented for authentication
+				// 	const loggedIn = await AuthService.isLoggedIn();
+				// 	if (loggedIn) {
+				// 		next();
+				// 	} else {
+				// 		AuthService.login();
+				// 	}
+				// },
 			},
 			{
 				name: "Bets",
