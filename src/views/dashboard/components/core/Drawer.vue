@@ -121,6 +121,11 @@
           to: '/',
         },
         {
+          icon: 'mdi-account-group',
+          title: 'Accounts',
+          to: '/accounts',
+        }, 
+        {
           icon: 'mdi-bitcoin',
           title: 'Bets',
           to: '/bets',
