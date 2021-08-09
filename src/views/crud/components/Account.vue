@@ -5,6 +5,12 @@
 		sort-by="calories"
 		class="elevation-1"
 	>
+		<template v-slot:[`item.birthday`]="{ item }">
+			<span>{{ formatDate(item.birthday) }}</span>
+		</template>
+		<template v-slot:[`item.openingDate`]="{ item }">
+			<span>{{ formatDate(item.openingDate) }}</span>
+		</template>
 		<template v-slot:top>
 			<v-toolbar flat>
 				<v-toolbar-title>{{ $route.name }}</v-toolbar-title>
@@ -85,10 +91,30 @@
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.birthday"
-											label="Birthday"
-										></v-text-field>
+										<v-menu
+											v-model="birthdayMenu"
+											:close-on-content-click="false"
+											:nudge-right="40"
+											transition="scale-transition"
+											offset-y
+											min-width="auto"
+										>
+											<template v-slot:activator="{ on, attrs }">
+												<v-text-field
+													v-model="editedItem.birthday"
+													label="Birthday"
+													prepend-icon="mdi-calendar"
+													:value="editedItem.birthday"
+													readonly
+													v-bind="attrs"
+													v-on="on"
+												></v-text-field>
+											</template>
+											<v-date-picker
+												v-model="editedItem.birthday"
+												@input="birthdayMenu = false"
+											></v-date-picker>
+										</v-menu>
 									</v-col>
 								</v-row>
 								<v-row>
@@ -120,11 +146,31 @@
 									</v-col>
 								</v-row>
 								<v-row>
-									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.openingDate"
-											label="Opening Date"
-										></v-text-field>
+									<v-col cols="12" sm="12" md="12">										
+										<v-menu
+											v-model="openingDateMenu"
+											:close-on-content-click="false"
+											:nudge-right="40"
+											transition="scale-transition"
+											offset-y
+											min-width="auto"
+										>
+											<template v-slot:activator="{ on, attrs }">
+												<v-text-field
+													v-model="editedItem.openingDate"
+													label="Opening Date"
+													prepend-icon="mdi-calendar"
+													:value="editedItem.openingDate"
+													readonly
+													v-bind="attrs"
+													v-on="on"
+												></v-text-field>
+											</template>
+											<v-date-picker
+												v-model="editedItem.openingDate"
+												@input="openingDateMenu = false"
+											></v-date-picker>
+										</v-menu>
 									</v-col>
 								</v-row>
 								<v-row>
@@ -247,6 +293,7 @@
 
 <script lang="ts">
 	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+	import {format, parseISO} from 'date-fns'
 	import {
 		AccountsClient,
 		CompaniesClient,
@@ -262,7 +309,7 @@
 		TypeVM,
 		StateVM,
 		OperatorVM,
-		PaymentAccountVM
+		PaymentAccountVM,
 	} from "@/utils/Api";
 
 	@Component
@@ -294,6 +341,8 @@
 		operatorsClient: OperatorsClient;
 		paymentAccountsClient: PaymentAccountsClient;
 
+		birthdayMenu = false;
+		openingDateMenu = false;
 		dialog = false;
 		dialogDelete = false;
 		headers = [
@@ -322,8 +371,18 @@
 		editedIndex = -1;
 		editedItem: any = {
 			name: "",
+			surname: "",
 			companyId: CompanyVM,
+			balance: 0,
+			email: "",
+			username: "",
+			password: "",
+			birthday: "",
+			address: "",
+			phone: "",
 			currencyId: CurrencyVM,
+			openingDate:  "",
+			loginLink: "",
 			statusId: StatusVM,
 			typeId: TypeVM,
 			stateId: StateVM,
@@ -332,8 +391,18 @@
 		};
 		defaultItem: any = {
 			name: "",
+			surname: "",
 			companyId: CompanyVM,
+			balance: 0,
+			email: "",
+			username: "",
+			password: "",
+			birthday: "",
+			address: "",
+			phone: "",
 			currencyId: CurrencyVM,
+			openingDate:  "",
+			loginLink: "",
 			statusId: StatusVM,
 			typeId: TypeVM,
 			stateId: StateVM,
@@ -351,6 +420,13 @@
 
 		get formTitle() {
 			return this.editedIndex === -1 ? "New Item" : "Edit Item";
+		}
+
+		formatDate(date) {
+			if(typeof date === "string"){
+				date = parseISO(date)
+			}
+			return format(date, 'yyyy-MM-dd');
 		}
 
 		async created(): Promise<void> {
@@ -375,7 +451,7 @@
 
 		mounted() {
 			this.accountsClient.getAll().then((res) => {
-				this.items = res;
+				this.items = res;			
 			});
 		}
 
@@ -391,6 +467,8 @@
 
 		editItem(item) {
 			this.editedIndex = this.items.indexOf(item);
+			item.birthday = this.formatDate(item.birthday)
+			item.openingDate = this.formatDate(item.openingDate)
 			this.editedItem = Object.assign({}, item);
 			this.dialog = true;
 		}
@@ -447,7 +525,7 @@
 				typeId: this.editedItem.type.id,
 				stateId: this.editedItem.state.id,
 				operatorId: this.editedItem.operator.id,
-				paymentAccountId: this.editedItem.paymentAccount.id
+				paymentAccountId: this.editedItem.paymentAccount.id,
 			};
 
 			if (this.editedIndex > -1) {
