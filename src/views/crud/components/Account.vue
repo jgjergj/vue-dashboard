@@ -5,12 +5,6 @@
 		sort-by="calories"
 		class="elevation-1"
 	>
-		<template v-slot:[`item.birthday`]="{ item }">
-			<span>{{ formatDate(item.birthday) }}</span>
-		</template>
-		<template v-slot:[`item.openingDate`]="{ item }">
-			<span>{{ formatDate(item.openingDate) }}</span>
-		</template>
 		<template v-slot:top>
 			<v-toolbar flat>
 				<v-toolbar-title>{{ $route.name }}</v-toolbar-title>
@@ -274,6 +268,15 @@
 				</v-dialog>
 			</v-toolbar>
 		</template>
+		<template v-slot:[`item.birthday`]="{ item }">
+			<span>{{ formatDate(item.birthday) }}</span>
+		</template>
+		<template v-slot:[`item.openingDate`]="{ item }">
+			<span>{{ formatDate(item.openingDate) }}</span>
+		</template>
+		<template v-slot:[`item.loginLink`]="{ item }">
+			<a :href="'https://' + item.loginLink" v-html="item.loginLink" target="_blank"></a>
+		</template>
 		<template v-slot:[`item.actions`]="{ item }">
 			<v-icon small class="mr-2" @click="editItem(item)">
 				mdi-pencil
@@ -282,12 +285,6 @@
 				mdi-delete
 			</v-icon>
 		</template>
-		<!-- <template v-slot:no-data>
-			<v-btn color="primary" @click="initialize">
-			<v-btn color="primary">
-				Reset
-			</v-btn>
-		</template> -->
 	</v-data-table>
 </template>
 
