@@ -3,6 +3,9 @@
 		:headers="headers"
 		:items="items"
 	>
+	<template v-slot:[`item.documentExpiry`]="{ item }">
+			<span>{{ formatDate(item.documentExpiry) }}</span>
+		</template>
 		<template v-slot:top>
 			<v-toolbar flat>
 				<v-toolbar-title>{{ $route.name }}</v-toolbar-title>
@@ -123,10 +126,30 @@
 								</v-row>
 								<v-row>
 									<v-col cols="12" sm="12" md="12">
-										<v-text-field
-											v-model="editedItem.documentExpiry"
-											label="Document Expiry"
-										></v-text-field>
+										<v-menu
+											v-model="documentExpiryMenu"
+											:close-on-content-click="false"
+											:nudge-right="40"
+											transition="scale-transition"
+											offset-y
+											min-width="auto"
+										>
+											<template v-slot:activator="{ on, attrs }">
+												<v-text-field
+													v-model="editedItem.documentExpiry"
+													label="Document Expiry"
+													prepend-icon="mdi-calendar"
+													:value="editedItem.documentExpiry"
+													readonly
+													v-bind="attrs"
+													v-on="on"
+												></v-text-field>
+											</template>
+											<v-date-picker
+												v-model="editedItem.documentExpiry"
+												@input="documentExpiryMenu = false"
+											></v-date-picker>
+										</v-menu>
 									</v-col>
 								</v-row>																
 							</v-container>
@@ -181,6 +204,7 @@
 
 <script lang="ts">
 	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+	import { format, parseISO } from 'date-fns';
 	import {
 		PaymentAccountsClient,
 		StatusesClient,
@@ -211,6 +235,8 @@
 		statesClient: StatesClient;
 		companiesClient: CompaniesClient;
 		statusesClient: StatusesClient;
+		
+		documentExpiryMenu = false;
 		dialog = false;
 		dialogDelete = false;
 		headers = [
@@ -248,6 +274,13 @@
 		statuses: any[] = [];
 		companies: any[] = [];
 
+		public formatDate(date) {
+			if(typeof date === "string"){
+				date = parseISO(date)
+			}
+			return format(date, 'yyyy-MM-dd');
+		}
+
 		get formTitle() {
 			return this.editedIndex === -1 ? "New Item" : "Edit Item";
 		}
@@ -277,6 +310,7 @@
 		}
 
 		editItem(item) {
+			item.documentExpiry = this.formatDate(item.documentExpiry)
 			this.editedIndex = this.items.indexOf(item);
 			this.editedItem = Object.assign({}, item);
 			this.dialog = true;
