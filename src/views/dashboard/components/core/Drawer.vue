@@ -127,8 +127,8 @@
         }, 
         {
           icon: 'mdi-bitcoin',
-          title: 'Bets',
-          to: '/bets',
+          title: 'Arbitrage Bets',
+          to: '/arbitrage-bets',
         }, 
         {
           icon: 'mdi-office-building',

@@ -32,9 +32,9 @@ const routes: Array<RouteConfig> = [
 				// },
 			},
 			{
-				name: "Bets",
-				path: `/bets`,
-				component: () => import("@/views/Bets.vue"),
+				name: "ArbitrageBets",
+				path: `/arbitrage-bets`,
+				component: () => import("@/views/ArbitrageBets.vue"),
 				meta: {
 					isSecure: true,
 				}

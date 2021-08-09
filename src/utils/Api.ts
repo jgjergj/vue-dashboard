@@ -213,6 +213,460 @@ export class AccountsClient {
     }
 }
 
+export class ArbitrageBetsClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5001";
+    }
+
+    getAll(): Promise<ArbitrageBetVM[]> {
+        let url_ = this.baseUrl + "/api/ArbitrageBets";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAll(_response);
+        });
+    }
+
+    protected processGetAll(response: Response): Promise<ArbitrageBetVM[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ArbitrageBetVM.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ArbitrageBetVM[]>(<any>null);
+    }
+
+    create(command: CreateArbitrageBetCommand): Promise<number> {
+        let url_ = this.baseUrl + "/api/ArbitrageBets";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreate(_response);
+        });
+    }
+
+    protected processCreate(response: Response): Promise<number> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<number>(<any>null);
+    }
+
+    update(id: number | undefined, command: UpdateArbitrageBetCommand): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/ArbitrageBets?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdate(_response);
+        });
+    }
+
+    protected processUpdate(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+
+    get(id: number): Promise<ArbitrageBetVM> {
+        let url_ = this.baseUrl + "/api/ArbitrageBets/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGet(_response);
+        });
+    }
+
+    protected processGet(response: Response): Promise<ArbitrageBetVM> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ArbitrageBetVM.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ArbitrageBetVM>(<any>null);
+    }
+
+    delete(id: number): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/ArbitrageBets/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+
+    updateStatus(id: number | undefined, command: UpdateArbitrageBetStatusCommand): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/ArbitrageBets/UpdateStatus?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdateStatus(_response);
+        });
+    }
+
+    protected processUpdateStatus(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+}
+
+export class ArbitrageMatchesClient {
+    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
+        this.http = http ? http : <any>window;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5001";
+    }
+
+    getAll(): Promise<ArbitrageMatchVM[]> {
+        let url_ = this.baseUrl + "/api/ArbitrageMatches";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGetAll(_response);
+        });
+    }
+
+    protected processGetAll(response: Response): Promise<ArbitrageMatchVM[]> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ArbitrageMatchVM.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ArbitrageMatchVM[]>(<any>null);
+    }
+
+    create(command: CreateArbitrageMatchCommand): Promise<string> {
+        let url_ = this.baseUrl + "/api/ArbitrageMatches";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processCreate(_response);
+        });
+    }
+
+    protected processCreate(response: Response): Promise<string> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<string>(<any>null);
+    }
+
+    update(id: string | undefined, command: UpdateArbitrageMatchCommand): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/ArbitrageMatches?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ = <RequestInit>{
+            body: content_,
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processUpdate(_response);
+        });
+    }
+
+    protected processUpdate(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+
+    get(id: string): Promise<ArbitrageMatchVM> {
+        let url_ = this.baseUrl + "/api/ArbitrageMatches/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "GET",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processGet(_response);
+        });
+    }
+
+    protected processGet(response: Response): Promise<ArbitrageMatchVM> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ArbitrageMatchVM.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<ArbitrageMatchVM>(<any>null);
+    }
+
+    delete(id: string): Promise<Unit> {
+        let url_ = this.baseUrl + "/api/ArbitrageMatches/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ = <RequestInit>{
+            method: "DELETE",
+            headers: {
+                "Accept": "application/json"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processDelete(_response);
+        });
+    }
+
+    protected processDelete(response: Response): Promise<Unit> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Unit.fromJS(resultData200);
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<Unit>(<any>null);
+    }
+}
+
 export class ClientsClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
@@ -3571,6 +4025,554 @@ export interface IUpdateAccountCommand {
     paymentAccountId?: number;
 }
 
+export class ArbitrageBetVM implements IArbitrageBetVM {
+    id?: number;
+    arbitrageMatch?: ArbitrageMatchVM | undefined;
+    company?: CompanyVM | undefined;
+    account?: AccountVM | undefined;
+    line?: string | undefined;
+    status?: StatusVM | undefined;
+    stake?: number;
+    odd?: number;
+    return?: number;
+    profit?: number;
+    profitARB?: number;
+    type?: TypeVM | undefined;
+
+    constructor(data?: IArbitrageBetVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.arbitrageMatch = _data["arbitrageMatch"] ? ArbitrageMatchVM.fromJS(_data["arbitrageMatch"]) : <any>undefined;
+            this.company = _data["company"] ? CompanyVM.fromJS(_data["company"]) : <any>undefined;
+            this.account = _data["account"] ? AccountVM.fromJS(_data["account"]) : <any>undefined;
+            this.line = _data["line"];
+            this.status = _data["status"] ? StatusVM.fromJS(_data["status"]) : <any>undefined;
+            this.stake = _data["stake"];
+            this.odd = _data["odd"];
+            this.return = _data["return"];
+            this.profit = _data["profit"];
+            this.profitARB = _data["profitARB"];
+            this.type = _data["type"] ? TypeVM.fromJS(_data["type"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ArbitrageBetVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new ArbitrageBetVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["arbitrageMatch"] = this.arbitrageMatch ? this.arbitrageMatch.toJSON() : <any>undefined;
+        data["company"] = this.company ? this.company.toJSON() : <any>undefined;
+        data["account"] = this.account ? this.account.toJSON() : <any>undefined;
+        data["line"] = this.line;
+        data["status"] = this.status ? this.status.toJSON() : <any>undefined;
+        data["stake"] = this.stake;
+        data["odd"] = this.odd;
+        data["return"] = this.return;
+        data["profit"] = this.profit;
+        data["profitARB"] = this.profitARB;
+        data["type"] = this.type ? this.type.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IArbitrageBetVM {
+    id?: number;
+    arbitrageMatch?: ArbitrageMatchVM | undefined;
+    company?: CompanyVM | undefined;
+    account?: AccountVM | undefined;
+    line?: string | undefined;
+    status?: StatusVM | undefined;
+    stake?: number;
+    odd?: number;
+    return?: number;
+    profit?: number;
+    profitARB?: number;
+    type?: TypeVM | undefined;
+}
+
+export class ArbitrageMatchVM implements IArbitrageMatchVM {
+    id?: string;
+    matchName?: string | undefined;
+    league?: LeagueVM | undefined;
+    homeTeam?: TeamVM | undefined;
+    awayTeam?: TeamVM | undefined;
+    startDate?: Date;
+    endDate?: Date;
+
+    constructor(data?: IArbitrageMatchVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.matchName = _data["matchName"];
+            this.league = _data["league"] ? LeagueVM.fromJS(_data["league"]) : <any>undefined;
+            this.homeTeam = _data["homeTeam"] ? TeamVM.fromJS(_data["homeTeam"]) : <any>undefined;
+            this.awayTeam = _data["awayTeam"] ? TeamVM.fromJS(_data["awayTeam"]) : <any>undefined;
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ArbitrageMatchVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new ArbitrageMatchVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["matchName"] = this.matchName;
+        data["league"] = this.league ? this.league.toJSON() : <any>undefined;
+        data["homeTeam"] = this.homeTeam ? this.homeTeam.toJSON() : <any>undefined;
+        data["awayTeam"] = this.awayTeam ? this.awayTeam.toJSON() : <any>undefined;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IArbitrageMatchVM {
+    id?: string;
+    matchName?: string | undefined;
+    league?: LeagueVM | undefined;
+    homeTeam?: TeamVM | undefined;
+    awayTeam?: TeamVM | undefined;
+    startDate?: Date;
+    endDate?: Date;
+}
+
+export class LeagueVM implements ILeagueVM {
+    id?: number;
+    name?: string | undefined;
+    state?: StateVM | undefined;
+    sport?: SportVM | undefined;
+
+    constructor(data?: ILeagueVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.state = _data["state"] ? StateVM.fromJS(_data["state"]) : <any>undefined;
+            this.sport = _data["sport"] ? SportVM.fromJS(_data["sport"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): LeagueVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeagueVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
+        data["sport"] = this.sport ? this.sport.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ILeagueVM {
+    id?: number;
+    name?: string | undefined;
+    state?: StateVM | undefined;
+    sport?: SportVM | undefined;
+}
+
+export class TeamVM implements ITeamVM {
+    id?: number;
+    name?: string | undefined;
+    state?: StateVM | undefined;
+    sport?: SportVM | undefined;
+    league?: LeagueVM | undefined;
+
+    constructor(data?: ITeamVM) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.state = _data["state"] ? StateVM.fromJS(_data["state"]) : <any>undefined;
+            this.sport = _data["sport"] ? SportVM.fromJS(_data["sport"]) : <any>undefined;
+            this.league = _data["league"] ? LeagueVM.fromJS(_data["league"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): TeamVM {
+        data = typeof data === 'object' ? data : {};
+        let result = new TeamVM();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
+        data["sport"] = this.sport ? this.sport.toJSON() : <any>undefined;
+        data["league"] = this.league ? this.league.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ITeamVM {
+    id?: number;
+    name?: string | undefined;
+    state?: StateVM | undefined;
+    sport?: SportVM | undefined;
+    league?: LeagueVM | undefined;
+}
+
+export class CreateArbitrageBetCommand implements ICreateArbitrageBetCommand {
+    arbitrageMatchId?: string;
+    companyId?: number;
+    accountId?: number;
+    line?: string | undefined;
+    statusId?: number | undefined;
+    stake?: number;
+    odd?: number;
+    return?: number;
+    profit?: number;
+    profitARB?: number;
+    typeId?: number | undefined;
+
+    constructor(data?: ICreateArbitrageBetCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.arbitrageMatchId = _data["arbitrageMatchId"];
+            this.companyId = _data["companyId"];
+            this.accountId = _data["accountId"];
+            this.line = _data["line"];
+            this.statusId = _data["statusId"];
+            this.stake = _data["stake"];
+            this.odd = _data["odd"];
+            this.return = _data["return"];
+            this.profit = _data["profit"];
+            this.profitARB = _data["profitARB"];
+            this.typeId = _data["typeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateArbitrageBetCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateArbitrageBetCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["arbitrageMatchId"] = this.arbitrageMatchId;
+        data["companyId"] = this.companyId;
+        data["accountId"] = this.accountId;
+        data["line"] = this.line;
+        data["statusId"] = this.statusId;
+        data["stake"] = this.stake;
+        data["odd"] = this.odd;
+        data["return"] = this.return;
+        data["profit"] = this.profit;
+        data["profitARB"] = this.profitARB;
+        data["typeId"] = this.typeId;
+        return data; 
+    }
+}
+
+export interface ICreateArbitrageBetCommand {
+    arbitrageMatchId?: string;
+    companyId?: number;
+    accountId?: number;
+    line?: string | undefined;
+    statusId?: number | undefined;
+    stake?: number;
+    odd?: number;
+    return?: number;
+    profit?: number;
+    profitARB?: number;
+    typeId?: number | undefined;
+}
+
+export class UpdateArbitrageBetCommand implements IUpdateArbitrageBetCommand {
+    id?: number;
+    arbitrageMatchId?: string;
+    companyId?: number;
+    accountId?: number;
+    line?: string | undefined;
+    statusId?: number | undefined;
+    stake?: number;
+    odd?: number;
+    return?: number;
+    profit?: number;
+    profitARB?: number;
+    typeId?: number | undefined;
+
+    constructor(data?: IUpdateArbitrageBetCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.arbitrageMatchId = _data["arbitrageMatchId"];
+            this.companyId = _data["companyId"];
+            this.accountId = _data["accountId"];
+            this.line = _data["line"];
+            this.statusId = _data["statusId"];
+            this.stake = _data["stake"];
+            this.odd = _data["odd"];
+            this.return = _data["return"];
+            this.profit = _data["profit"];
+            this.profitARB = _data["profitARB"];
+            this.typeId = _data["typeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateArbitrageBetCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateArbitrageBetCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["arbitrageMatchId"] = this.arbitrageMatchId;
+        data["companyId"] = this.companyId;
+        data["accountId"] = this.accountId;
+        data["line"] = this.line;
+        data["statusId"] = this.statusId;
+        data["stake"] = this.stake;
+        data["odd"] = this.odd;
+        data["return"] = this.return;
+        data["profit"] = this.profit;
+        data["profitARB"] = this.profitARB;
+        data["typeId"] = this.typeId;
+        return data; 
+    }
+}
+
+export interface IUpdateArbitrageBetCommand {
+    id?: number;
+    arbitrageMatchId?: string;
+    companyId?: number;
+    accountId?: number;
+    line?: string | undefined;
+    statusId?: number | undefined;
+    stake?: number;
+    odd?: number;
+    return?: number;
+    profit?: number;
+    profitARB?: number;
+    typeId?: number | undefined;
+}
+
+export class UpdateArbitrageBetStatusCommand implements IUpdateArbitrageBetStatusCommand {
+    id?: number;
+    status?: string | undefined;
+
+    constructor(data?: IUpdateArbitrageBetStatusCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.status = _data["status"];
+        }
+    }
+
+    static fromJS(data: any): UpdateArbitrageBetStatusCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateArbitrageBetStatusCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["status"] = this.status;
+        return data; 
+    }
+}
+
+export interface IUpdateArbitrageBetStatusCommand {
+    id?: number;
+    status?: string | undefined;
+}
+
+export class CreateArbitrageMatchCommand implements ICreateArbitrageMatchCommand {
+    leagueId?: number;
+    homeTeamId?: number;
+    awayTeamId?: number;
+    matchName?: string | undefined;
+    startDate?: Date;
+    endDate?: Date;
+
+    constructor(data?: ICreateArbitrageMatchCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.leagueId = _data["leagueId"];
+            this.homeTeamId = _data["homeTeamId"];
+            this.awayTeamId = _data["awayTeamId"];
+            this.matchName = _data["matchName"];
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): CreateArbitrageMatchCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateArbitrageMatchCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leagueId"] = this.leagueId;
+        data["homeTeamId"] = this.homeTeamId;
+        data["awayTeamId"] = this.awayTeamId;
+        data["matchName"] = this.matchName;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ICreateArbitrageMatchCommand {
+    leagueId?: number;
+    homeTeamId?: number;
+    awayTeamId?: number;
+    matchName?: string | undefined;
+    startDate?: Date;
+    endDate?: Date;
+}
+
+export class UpdateArbitrageMatchCommand implements IUpdateArbitrageMatchCommand {
+    id?: string;
+    leagueId?: number;
+    homeTeamId?: number;
+    awayTeamId?: number;
+    startDate?: Date;
+    endDate?: Date;
+
+    constructor(data?: IUpdateArbitrageMatchCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.leagueId = _data["leagueId"];
+            this.homeTeamId = _data["homeTeamId"];
+            this.awayTeamId = _data["awayTeamId"];
+            this.startDate = _data["startDate"] ? new Date(_data["startDate"].toString()) : <any>undefined;
+            this.endDate = _data["endDate"] ? new Date(_data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateArbitrageMatchCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateArbitrageMatchCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["leagueId"] = this.leagueId;
+        data["homeTeamId"] = this.homeTeamId;
+        data["awayTeamId"] = this.awayTeamId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateArbitrageMatchCommand {
+    id?: string;
+    leagueId?: number;
+    homeTeamId?: number;
+    awayTeamId?: number;
+    startDate?: Date;
+    endDate?: Date;
+}
+
 export class ClientVM implements IClientVM {
     id?: number;
     name?: string | undefined;
@@ -3989,54 +4991,6 @@ export interface IUpdateDepartmentCommand {
     id?: number;
     name?: string | undefined;
     balance?: number;
-}
-
-export class LeagueVM implements ILeagueVM {
-    id?: number;
-    name?: string | undefined;
-    state?: StateVM | undefined;
-    sport?: SportVM | undefined;
-
-    constructor(data?: ILeagueVM) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.state = _data["state"] ? StateVM.fromJS(_data["state"]) : <any>undefined;
-            this.sport = _data["sport"] ? SportVM.fromJS(_data["sport"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): LeagueVM {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeagueVM();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
-        data["sport"] = this.sport ? this.sport.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ILeagueVM {
-    id?: number;
-    name?: string | undefined;
-    state?: StateVM | undefined;
-    sport?: SportVM | undefined;
 }
 
 export class CreateLeagueCommand implements ICreateLeagueCommand {
@@ -4653,58 +5607,6 @@ export interface IUpdateStatusCommand {
     id?: number;
     name?: string | undefined;
     environment?: string | undefined;
-}
-
-export class TeamVM implements ITeamVM {
-    id?: number;
-    name?: string | undefined;
-    state?: StateVM | undefined;
-    sport?: SportVM | undefined;
-    league?: LeagueVM | undefined;
-
-    constructor(data?: ITeamVM) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.name = _data["name"];
-            this.state = _data["state"] ? StateVM.fromJS(_data["state"]) : <any>undefined;
-            this.sport = _data["sport"] ? SportVM.fromJS(_data["sport"]) : <any>undefined;
-            this.league = _data["league"] ? LeagueVM.fromJS(_data["league"]) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): TeamVM {
-        data = typeof data === 'object' ? data : {};
-        let result = new TeamVM();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["state"] = this.state ? this.state.toJSON() : <any>undefined;
-        data["sport"] = this.sport ? this.sport.toJSON() : <any>undefined;
-        data["league"] = this.league ? this.league.toJSON() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ITeamVM {
-    id?: number;
-    name?: string | undefined;
-    state?: StateVM | undefined;
-    sport?: SportVM | undefined;
-    league?: LeagueVM | undefined;
 }
 
 export class CreateTeamCommand implements ICreateTeamCommand {

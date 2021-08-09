@@ -14,48 +14,61 @@
 							<v-autocomplete
 								placeholder="League"
 								:items="leagues"
+								:rules="[rules.required]"
 								v-model="match.league"
+								item-text="name"
+								item-value="id"
+								return-object
+								@change="onLeagueChange"
 							></v-autocomplete>
 
 							<v-autocomplete
 								placeholder="Home Team"
 								:items="teams"
+								:rules="[rules.required]"
 								v-model="match.homeTeam"
+								item-text="name"
+								item-value="id"
+								return-object
 							></v-autocomplete>
 
 							<v-autocomplete
 								placeholder="Away Team"
 								:items="teams"
+								:rules="[rules.required]"
 								v-model="match.awayTeam"
+								item-text="name"
+								item-value="id"
+								return-object
 							></v-autocomplete>
 
-							<template>
+							<!-- <template> -->
 								<!-- v-model="showPicker"
-							:close-on-content-click="false" -->
-								<v-menu
+									:close-on-content-click="false" -->
+								<!-- <v-menu
 									transition="scale-transition"
 									offset-y
 									max-width="290px"
 									min-width="290px"
 								>
-									<template v-slot:activator="{ on }">
+									<template v-slot:activator="{ on }"> -->
 										<!-- v-model="row.startTime" -->
-										<v-text-field
+										<!-- <v-text-field
 											label="Start Date"
 											persistent-hint
 											readonly
 											v-on="on"
 										></v-text-field>
-									</template>
+									</template> -->
 									<!-- v-model="row.startTime" -->
 									<!-- @change="startTimeChanged(row.index)" -->
 									<!-- @input="showPicker = false" -->
-									<v-date-picker no-title></v-date-picker>
+									<!-- <v-date-picker no-title></v-date-picker>
 								</v-menu>
-							</template>
+							</template> -->
 
 							<!-- v-model="row.endTime" -->
-							<v-text-field placeholder="End Time" readonly></v-text-field>
+							<!-- <v-text-field placeholder="End Time" readonly></v-text-field> -->
 						</v-card-text>
 					</v-card>
 				</v-col>
@@ -96,30 +109,43 @@
 								<tr v-for="row in newBetItems" :key="row.index">
 									<td width="250px">
 										<v-autocomplete
-											:items="companies"
-											v-model="row.company"
 											placeholder="Company"
+											:items="companies"
+											:rules="[rules.required]"
+											v-model="row.company"
+											@change="onCompanyChange"
+											item-text="name"
+											item-value="id"
+											return-object
 										></v-autocomplete>
 									</td>
 									<td width="auto">
 										<v-autocomplete
-											:items="accounts"
-											v-model="row.account"
 											placeholder="Account"
+											:items="accounts"
+											:rules="[rules.required]"
+											v-model="row.account"
+											item-text="name"
+											item-value="id"
+											return-object
 										></v-autocomplete>
 									</td>
 									<td width="110px">
 										<v-autocomplete
-											:items="lines"
-											v-model="row.line"
 											placeholder="Line"
+											:items="lines"
+											:rules="[rules.required]"
+											v-model="row.line"
 										></v-autocomplete>
 									</td>
 									<td width="110px">
 										<v-autocomplete
+											placeholder="Status"
 											:items="statuses"
 											v-model="row.status"
-											placeholder="Status"
+											item-text="name"
+											item-value="id"
+											return-object
 											@change="outcomesChanged(row.index)"
 										></v-autocomplete>
 									</td>
@@ -152,50 +178,37 @@
 									</td>
 									<td width="125px">
 										<v-autocomplete
+											placeholder="Type"
 											:items="types"
 											v-model="row.type"
-											placeholder="Type"
+											item-text="name"
+											item-value="id"
+											return-object
 										></v-autocomplete>
 									</td>
 									<td>
-										<v-icon @click="removeBetRow(row.index)">X</v-icon>
+										<v-icon @click="removeBetRow(row.index)">mdi-close</v-icon>
 									</td>
 								</tr>
 							</table>
+						</v-card-text>
+						<v-card-text>
+							<div class="text-center">
+								<v-btn
+									color="primary"
+									dark
+									class="mb-2"
+									justify="end"
+									v-on:click="save()"
+								>
+									Save
+								</v-btn>
+							</div>
 						</v-card-text>
 					</v-card>
 				</v-col>
 			</v-row>
 		</base-material-card>
-
-		<!-- <v-col>
-				<base-material-card color="primary">
-					<template v-slot:heading>
-						<div class="display-2 font-weight-light">
-							Bets
-						</div>
-					</template>
-					
-				</base-material-card>
-			</v-col> -->
-		<!-- <v-col cols="12">
-				<base-material-card color="primary">
-					<template v-slot:heading>
-						<div class="display-2 font-weight-light">
-							{{ $route.name }}
-						</div>
-					</template>
-
-					<v-card-text>
-						<v-container class="pa-0" fluid>
-							<v-row >
-								
-							</v-row>
-							
-						</v-container>
-					</v-card-text>
-				</base-material-card>
-			</v-col> -->
 
 		<!-- begin region matches -->
 
@@ -212,10 +225,11 @@
 							<div class="section">
 								<v-data-table
 									:headers="betHeaders"
-									:items="items"
+									:items="arbitrageBets"
+									:items-per-page="500"
 									hide-default-footer
 									item-key="index"
-									group-by="uuid"
+									group-by="arbitrageMatch.id"
 									group-expanded
 								>
 									<template v-slot:[`group.header`]="{ items, isOpen, toggle }">
@@ -224,7 +238,7 @@
 												<v-icon @click="toggle"
 													>{{ isOpen ? "mdi-minus" : "mdi-plus" }}
 												</v-icon>
-												{{ items[0].match }}
+												{{ items[0].arbitrageMatch.matchName }}
 											</div>
 
 											<v-spacer></v-spacer>
@@ -247,15 +261,15 @@
 									<template v-slot:item="{ item }">
 										<tr>
 											<!-- <td>{{ item.match }}</td> -->
-											<td>{{ item.company }}</td>
-											<td>{{ item.account }}</td>
+											<td>{{ item.company.name }}</td>
+											<td>{{ item.account.name }}</td>
 											<td>{{ item.line }}</td>
 											<td>
 												<v-chip
 													:color="getStatusColor(item.status)"
 													text-color="white"
 												>
-													{{ item.status }}
+													{{ item.status ? item.status.name : "" }}
 												</v-chip>
 											</td>
 											<td>{{ item.stake }}</td>
@@ -264,14 +278,14 @@
 											<td>{{ item.profit }}</td>
 											<td>{{ item.profitARB }}</td>
 											<td>{{ item.predict }}</td>
-											<td>{{ item.type }}</td>
+											<td>{{ item.type ? item.type.name : "" }}</td>
 											<td>
 												<v-btn
 													class="mx-1"
 													fab
 													x-small
 													color="primary"
-													@click="changeStatusWin(item)"
+													@click="changeMatchStatus(item, 'Win')"
 												>
 													<v-icon>mdi-check</v-icon>
 												</v-btn>
@@ -280,7 +294,7 @@
 													fab
 													x-small
 													color="error"
-													@click="changeStatusLose(item)"
+													@click="changeMatchStatus(item, 'Lose')"
 												>
 													<v-icon>mdi-close</v-icon>
 												</v-btn>
@@ -289,107 +303,11 @@
 													fab
 													x-small
 													color="blue-grey"
-													@click="changeStatusVoid(item)"
+													@click="changeMatchStatus(item, 'Void')"
 												>
 													<v-icon>mdi-minus</v-icon>
 												</v-btn>
 											</td>
-											<!-- <v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.match"
-														label="Match"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.company"
-														label="Company"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.account"
-														label="Account"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.type"
-														label="Type"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.line"
-														label="Line"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.status"
-														label="Status"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.stake"
-														label="Stake"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.odd"
-														label="Odd"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.return"
-														label="Return"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.profit"
-														label="Profit"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.profitARB"
-														label="Profit ARB"
-													></v-text-field>
-												</v-col>
-											</v-row>
-											<v-row>
-												<v-col cols="12" sm="12" md="12">
-													<v-text-field
-														v-model="editedItem.predict"
-														label="Predict"
-													></v-text-field>
-												</v-col>
-											</v-row> -->
 										</tr>
 									</template>
 								</v-data-table>
@@ -419,130 +337,24 @@
 </template>
 
 <script lang="ts">
-	import { v4 as uuidv4 } from "uuid";
-	import { Vue, Component, Prop, Watch } from "vue-property-decorator";
+	import { Vue, Component, Prop } from "vue-property-decorator";
 	import MaterialCard from "/src/components/base/MaterialCard.vue";
+	import {
+		ArbitrageBetsClient,
+		ArbitrageMatchesClient,
+		LeaguesClient,
+		TeamsClient,
+		CompaniesClient,
+		AccountsClient,
+		StatusesClient,
+		TypesClient,
+		LeagueVM,
+		CreateArbitrageBetCommand,
+		UpdateArbitrageBetCommand,
+		UpdateArbitrageBetStatusCommand,
+	} from "@/utils/Api";
 
-	//todo: uncomment
-	// import { BetsClient } from "@/utils/Api";
-
-	const types = ["ARB", "Middle", "Pa mbrojtur"];
-	const companies = ["Bet 365", "bwin", "1xbet", "888sport"];
-	const accounts = ["Mondi", "Gimi", "Gjergji", "Coli", "Filani", "Fisteku"];
-	const statuses = ["Win", "Lose", "Void"];
 	const lines = ["1", "x", "2", "12", "1x", "x2", "0-2", "3+"];
-	const leagues = [
-		"Serie A",
-		"Premier League",
-		"Bungesliga",
-		"La Liga",
-		"Eredivisie",
-		"Ligue 1",
-	];
-	const teams = [
-		"Inter",
-		"Milan",
-		"Juventus",
-		"Atalanta",
-		"Liverpool",
-		"Chelsea",
-		"Manchester United",
-		"Arsenal",
-		"Roma",
-		"Lazio",
-		"Napoli",
-	];
-
-	let itemsSample = [
-		{
-			index: 0,
-			id: 1,
-			uuid: "4618d483-4072-4b05-9dec-f36264b43822",
-			league: "Serie A",
-			homeTeam: "Inter",
-			awayTeam: "Milan",
-			startTime: "",
-			endTime: "",
-			match: "Inter vs Milan",
-			type: "Middle",
-			company: "Bet 365",
-			account: "Gjergji",
-			status: "Win",
-			line: "1",
-			stake: 500,
-			odd: 1.8,
-			return: 900,
-			profit: 0,
-			profitARB: 0,
-			predict: 0,
-		},
-		{
-			index: 1,
-			id: 2,
-			uuid: "0ec278ef-c168-4fee-8f4a-cff14260e32d",
-			league: "Premier League",
-			homeTeam: "Chelsea",
-			awayTeam: "Arsenal",
-			startTime: "",
-			endTime: "",
-			match: "Chelsea vs Arsenal",
-			type: "Middle",
-			company: "Bet 365",
-			account: "Gjergji",
-			status: "Lose",
-			line: "2",
-			stake: 500,
-			odd: 2.3,
-			return: 0,
-			profit: 0,
-			profitARB: 0,
-			predict: 0,
-		},
-		{
-			index: 2,
-			id: 3,
-			uuid: "dda0b3d6-b40d-47bf-b5da-1c323fa15a1b",
-			league: "Serie A",
-			homeTeam: "Atalanta",
-			awayTeam: "Napoli",
-			startTime: "",
-			endTime: "",
-			match: "Atalanta vs Napoli",
-			type: "ARB",
-			company: "Bet 365",
-			account: "Gjergji",
-			status: "Lose",
-			line: "1",
-			stake: 55,
-			odd: 1.9,
-			return: 0,
-			profit: -55,
-			profitARB: 0,
-			predict: 0,
-		},
-		{
-			index: 3,
-			id: 4,
-			uuid: "dda0b3d6-b40d-47bf-b5da-1c323fa15a1b",
-			league: "Serie A",
-			homeTeam: "Atalanta",
-			awayTeam: "Napoli",
-			startTime: "",
-			endTime: "",
-			match: "Atalanta vs Napoli",
-			type: "ARB",
-			company: "1xbet",
-			account: "Coli",
-			status: "Win",
-			line: "x2",
-			stake: 45,
-			odd: 2.5,
-			return: 112.5,
-			profit: 67.5,
-			profitARB: 12.5,
-			predict: 0,
-		},
-	];
 
 	//todo: this will be a type
 	const newBetItem = {
@@ -565,50 +377,63 @@
 			"base-material-card": MaterialCard,
 		},
 	})
-	export default class Bets extends Vue {
-		name = "Bets";
+	export default class ArbitrageBets extends Vue {
+		name = "ArbitrageBets";
 
 		@Prop()
 		entity;
+
+		constructor() {
+			super();
+
+			this.arbitrageBetsClient = new ArbitrageBetsClient();
+			this.arbitrageMatchesClient = new ArbitrageMatchesClient();
+			this.leaguesClient = new LeaguesClient();
+			this.teamsClient = new TeamsClient();
+			this.companiesClient = new CompaniesClient();
+			this.accountsClient = new AccountsClient();
+			this.statusesClient = new StatusesClient();
+			this.typesClient = new TypesClient();
+		}
+
+		arbitrageBetsClient: ArbitrageBetsClient;
+		arbitrageMatchesClient: ArbitrageMatchesClient;
+		leaguesClient: LeaguesClient;
+		teamsClient: TeamsClient;
+		companiesClient: CompaniesClient;
+		accountsClient: AccountsClient;
+		statusesClient: StatusesClient;
+		typesClient: TypesClient;
 
 		snackbar = {
 			state: false,
 			msg: "",
 		};
 		overlay = false;
-		types: string[] = [];
-		companies: string[] = [];
-		accounts: string[] = [];
-		statuses: string[] = [];
-		lines: string[] = [];
-		leagues: string[] = [];
-		teams: string[] = [];
+		leagues: any[] = [];
+		teams: any[] = [];
+		companies: any[] = [];
+		accounts: any[] = [];
+		statuses: any[] = [];
+		types: any[] = [];
+		lines: any[] = [];
+
 		match = {
-			league: "",
-			homeTeam: "",
-			awayTeam: "",
+			id: "",
+			leagueId: "",
+			league: LeagueVM,
+			homeTeamId: "",
+			homeTeam: {},
+			awayTeamId: "",
+			awayTeam: {},
+			matchName: "",
 			startTime: "",
 			endTime: "",
 		};
 
-		constructor() {
-			super();
-			//todo: to be uncommented
-			// this.betsClient = new BetsClient();
-			// this.type = ""
-		}
-
-		//todo: to be uncommented
-		// betsClient: BetsClient;
 		dialog = false;
 		dialogDelete = false;
-		// headers = [
 		betHeaders = [
-			// {
-			// 	text: "Match",
-			// 	value: "match",
-			// 	class: "text-xl-h4 font-weight-black",
-			// },
 			{
 				text: "Company",
 				value: "company",
@@ -671,7 +496,8 @@
 				sortable: false,
 			},
 		];
-		items: any[] = [];
+
+		arbitrageBets: any[] = [];
 		newBetFillerData: any;
 		newBetItems: any[] = [];
 		typeText = "";
@@ -704,7 +530,7 @@
 			predict: 0,
 		};
 
-		get formTitle() {
+		get formTitle(): string {
 			return this.editedIndex === -1 ? "New Item" : "Edit Item";
 		}
 
@@ -728,50 +554,91 @@
 			);
 		}
 
-		mounted(): void {
-			//todo: to be uncommented
-			// this.betsClient.getAll().then((res) => {
-			// 	this.items = res;
-			// });
-
-			this.items = itemsSample;
-			this.types = types;
-			this.companies = companies;
-			this.accounts = accounts;
-			this.statuses = statuses;
+		async mounted(): Promise<void> {
+			[
+				this.arbitrageBets,
+				this.leagues,
+				this.companies,
+				this.statuses,
+				this.types,
+			] = await Promise.all([
+				this.arbitrageBetsClient.getAll(),
+				this.leaguesClient.getAll(),
+				this.companiesClient.getAll(),
+				this.statusesClient.getAll(),
+				this.typesClient.getAll(),
+			]);
 			this.lines = lines;
-			this.leagues = leagues;
-			this.teams = teams;
 
-			console.log(this.items);
+			this.arbitrageBets.forEach((bet, index) => {
+				bet.index = index;
+			});
+			
+			console.log(this.arbitrageBets);
 			
 
-			this.newBetItems = [
-				[Object.assign({ index: this.newBetItems.length }, newBetItem)],
-			];
+			this.newBetItems = [newBetItem];
 		}
 
-		save(): void {
-			this.overlay = true;
-			setTimeout(() => {
-				let newBetItemsLength = 0;
-				const uuid = uuidv4();
-				let index = 0;
-				this.newBetItems.forEach((item) => {
-					item.uuid = uuid;
-					item.index = index++;
-					item.league = this.match.league;
-					item.homeTeam = this.match.homeTeam;
-					item.awayTeam = this.match.awayTeam;
-					item.startTime = this.match.startTime;
-					item.endTime = this.match.endTime;
-					item.match = `${this.match.homeTeam} vs ${this.match.awayTeam}`;
+		async onLeagueChange(): Promise<void> {
+			this.teams = await this.teamsClient.getAll();
+		}
 
-					if (item.match !== "") {
-						this.items.push(item);
+		async onCompanyChange(): Promise<void> {
+			this.accounts = await this.accountsClient.getAll();
+		}
+
+		async save(): Promise<void> {
+			//todo: add validations here
+
+			try {
+				this.overlay = true;
+				let newBetItemsLength = 0;
+				let index = 0;
+
+				//todo: to see how to manage these better without sending the matchName
+				this.match.leagueId = (this.match.league as any).id;
+				this.match.homeTeamId = (this.match.homeTeam as any).id;
+				this.match.awayTeamId = (this.match.awayTeam as any).id;
+				this.match.matchName =
+					(this.match.homeTeam as any).name +
+					" vs " +
+					(this.match.awayTeam as any).name;
+
+				if (this.match.id) {
+					await this.arbitrageMatchesClient.update(
+						this.match.id,
+						this.match as any
+					);
+				} else {
+					this.match.id = await this.arbitrageMatchesClient.create(
+						this.match as any
+					);
+				}
+
+				for (let i = 0; i < this.newBetItems.length; i++) {
+					if (!this.newBetItems[i].id) {
+						const arbitrageBet = await this.createArbitrageBet(this.newBetItems[i]);
+						
+						if (arbitrageBet.id) {
+							arbitrageBet.index = this.arbitrageBets.length;
+							//info: these are added for the ui as it needs the whole status object to display the name
+							//todo: refactor these to use types
+							arbitrageBet.company = this.newBetItems[i].company; 
+							arbitrageBet.account = this.newBetItems[i].account; 
+							arbitrageBet.status = this.newBetItems[i].status; 
+							arbitrageBet.type = this.newBetItems[i].type; 
+							arbitrageBet.arbitrageMatch = {};
+							arbitrageBet.arbitrageMatch.matchName = this.match.matchName;
+							
+							this.arbitrageBets.push(arbitrageBet);
+							newBetItemsLength++;
+						}
+					} else {
+						await this.updateArbitrageBet(this.newBetItems[i]);
 						newBetItemsLength++;
 					}
-				});
+				}
 				if (newBetItemsLength > 0) {
 					if (newBetItemsLength > 1) {
 						this.showInfo(`${newBetItemsLength} bets saved`);
@@ -783,16 +650,62 @@
 				this.newBetItems = [Object.assign({}, newBetItem)];
 
 				this.resetMatchData();
-
+			} catch (error) {
+				console.error(error);
+			} finally {
 				this.overlay = false;
-			}, 600);
-			// todo: to be uncommented
-			// this.betsClient.create(this.editedItem);
+			}
+		}
+
+		async createArbitrageBet(bet): Promise<any> {
+			const item: CreateArbitrageBetCommand = new CreateArbitrageBetCommand();
+
+			item.arbitrageMatchId = this.match.id;
+			// item.index = index++;
+
+			item.companyId = bet.company.id;
+			item.accountId = bet.account.id;
+			item.statusId = bet.status ? bet.status.id : null;
+			item.typeId = bet.type ? bet.type.id : null;
+			item.line = bet.line;
+			item.stake = bet.stake;
+			item.odd = bet.odd;
+			item.return = bet.return;
+			item.profit = bet.profit;
+			item.profitARB = bet.profitARB;
+
+			const arbitrageBetId = await this.arbitrageBetsClient.create(item);
+
+			(item as any).id = arbitrageBetId;
+			return item;
+		}
+
+		async updateArbitrageBet(bet): Promise<void> {
+			const item: UpdateArbitrageBetCommand = new UpdateArbitrageBetCommand();
+			item.id = bet.id;
+			item.arbitrageMatchId = this.match.id;
+			// item.index = index++;
+
+			item.companyId = bet.company.id;
+			item.accountId = bet.account.id;
+			item.statusId = bet.status ? bet.status.id : null;
+			item.typeId = bet.type ? bet.type.id : null;
+			item.line = bet.line;
+			item.stake = bet.stake;
+			item.odd = bet.odd;
+			item.return = bet.return;
+			item.profit = bet.profit;
+			item.profitARB = bet.profitARB;
+
+			await this.arbitrageBetsClient.update(bet.id, item);
 		}
 
 		resetMatchData(): void {
-			this.match.league = "";
+			this.match.leagueId = "";
+			this.match.league = LeagueVM;
+			this.match.homeTeamId = "";
 			this.match.homeTeam = "";
+			this.match.awayTeamId = "";
 			this.match.awayTeam = "";
 			this.match.startTime = "";
 			this.match.endTime = "";
@@ -817,14 +730,25 @@
 
 		outcomesChanged(index): void {
 			const selectedRow = this.newBetItems.find((i) => i.index == index);
-			this.calculateOutcomes(selectedRow);
+			this.calculateOutcomes(selectedRow, this.newBetItems);
 		}
 
-		calculateOutcomes(row): void {
-			const stake = parseFloat(row.stake);
-			const odd = parseFloat(row.odd);
-			if (stake > 0 && odd > 0) {
-				switch (row.status) {
+		calculateOutcomes(row, connectedBets): void {
+			const stake = parseFloat(row.stake) || 0;
+			const odd = parseFloat(row.odd) || 0;
+
+			const totalArbStake = connectedBets.reduce(
+				(accumulator, currentValue) => {
+					const accNo = parseFloat(accumulator);
+					const currValNo = parseFloat(currentValue.stake) || 0;
+
+					return accNo + currValNo;
+				},
+				0
+			);
+
+			if (stake > 0 && odd > 0 && row.status) {
+				switch (row.status.name) {
 					case "Win":
 						row.return = Math.round(stake * odd * 100) / 100;
 						break;
@@ -837,11 +761,54 @@
 				}
 
 				row.profit = Math.round((row.return - stake) * 100) / 100;
+
+				this.calculateProfitArb(parseFloat(totalArbStake), connectedBets);
 			}
+
+			this.calculatePredict(totalArbStake, connectedBets);
+			// row.predict = Math.round(((stake * odd) - parseFloat(totalArbStake)) * 100) / 100;
+
+			// return connectedBets;
+		}
+
+		calculateProfitArb(totalArbStake: number, connectedBets): void {
+			const totalReturn = connectedBets.reduce(
+				(accumulator, currentValue) => {
+					//info: gets the return of bets with status win or void
+					if (currentValue.status && currentValue.status.name != "Lose") {
+						const accNo = parseFloat(accumulator);
+						const currValNo = parseFloat(currentValue.return);
+
+						return accNo + currValNo;
+					} else {
+						return accumulator;
+					}
+				},
+				0
+			);
+
+			connectedBets.forEach((row) => {
+				row.profitARB = Math.round((totalReturn - totalArbStake) * 100) / 100;
+			});
+		}
+
+		calculatePredict(totalArbStake, connectedBets): void {
+			connectedBets.forEach((row) => {
+				row.predict =
+					Math.round(
+						(parseFloat(row.stake) * parseFloat(row.odd) -
+							parseFloat(totalArbStake)) *
+							100
+					) / 100;
+			});
 		}
 
 		removeBetRow(index): void {
 			this.newBetItems.splice(index, 1);
+
+			this.newBetItems.forEach((item, i) => {
+				item.index = i;
+			});
 		}
 
 		showPicker = false;
@@ -855,7 +822,7 @@
 			// 	.split("T")[0];
 		}
 
-		addDays(date, days) {
+		addDays(date, days): Date{
 			let d = new Date(date);
 			d.setDate(d.getDay() + days);
 			return d;
@@ -875,50 +842,73 @@
 		};
 
 		editArbitrage(items): void {
-			this.match.league = items[0].league;
-			this.match.homeTeam = items[0].homeTeam;
-			this.match.awayTeam = items[0].awayTeam;
-			this.match.startTime = items[0].startTime;
-			this.match.endTime = items[0].endTime;
+			this.match.id = items[0].arbitrageMatch.id;
+			this.match.leagueId = items[0].arbitrageMatch.leagueId;
+			this.match.league = items[0].arbitrageMatch.league;
+			this.match.homeTeamId = items[0].arbitrageMatch.homeTeamId;
+			this.match.homeTeam = items[0].arbitrageMatch.homeTeam;
+			this.match.awayTeamId = items[0].arbitrageMatch.awayTeamId;
+			this.match.awayTeam = items[0].arbitrageMatch.awayTeam;
+			this.match.startTime = items[0].arbitrageMatch.startTime;
+			this.match.endTime = items[0].arbitrageMatch.endTime;
+
+			this.teams.push(this.match.homeTeam);
+			this.teams.push(this.match.awayTeam);
 
 			this.newBetItems = [];
 			items.forEach((item) => {
+				this.accounts.push(item.account);
 				this.newBetItems.push(item);
 			});
 		}
 
 		deleteArbitrage(items): void {
 			items.forEach((item) => {
-				const itemToDeleteIndex = this.items.findIndex(
-					(i) => i.uuid == item.uuid
+				const itemToDeleteIndex = this.arbitrageBets.findIndex(
+					(i) => i.arbitrageMatch == item.uuid
 				);
-				this.items.splice(itemToDeleteIndex, 1);
+				this.arbitrageBets.splice(itemToDeleteIndex, 1);
 			});
-			this.showInfo(`Arbitrage bets deleted`)
+			this.showInfo(`Arbitrage bets deleted`);
 		}
 
 		getStatusColor(status): string {
-			if (status == "Lose") return "error";
-			else if (status == "Win") return "primary";
-			else return "blue-grey";
+			if (status) {
+				if (status.name == "Lose") return "error";
+				else if (status.name == "Win") return "primary";
+				else if (status.name == "Running") return "warning";
+				else return "blue-grey";
+			}
+
+			return "";
 		}
 
-		changeStatusWin(item): void {
-			const itemIndex = this.items.findIndex(i => i.id === item.id);
-			this.items[itemIndex].status = "Win";
-			this.showInfo(`Bet Status changed successfully`)
-		}
-
-		changeStatusLose(item): void {
-			const itemIndex = this.items.findIndex(i => i.id === item.id);
-			this.items[itemIndex].status = "Lose";
-			this.showInfo(`Bet Status changed successfully`)
-		}
-
-		changeStatusVoid(item): void {
-			const itemIndex = this.items.findIndex(i => i.id === item.id);
-			this.items[itemIndex].status = "Void";
-			this.showInfo(`Bet Status changed successfully`)
+		async changeMatchStatus(item, status: string): Promise<void> {
+			this.overlay = true;
+			const statusObj = this.statuses.find(s => s.name == status);
+			item.status = statusObj;
+			const itemIndex = this.arbitrageBets.findIndex((i) => i.id === item.id);
+			const connectedBets = this.arbitrageBets.filter(b => b.arbitrageMatch.id == item.arbitrageMatch.id)
+			this.calculateOutcomes(item, connectedBets)
+			try {
+				
+				await this.arbitrageBetsClient
+					.updateStatus(item.id, {
+						id: item.id,
+						status: status,
+					} as UpdateArbitrageBetStatusCommand)
+					.then((res) => {
+						this.arbitrageBets[itemIndex].status.name = status;						
+						connectedBets.forEach(bet => {
+							this.arbitrageBetsClient.update(bet.id, bet)
+						});
+						this.showInfo(`Bet Status changed successfully`);
+					});
+			} catch (error) {
+				console.error(error);
+			} finally {
+				this.overlay = false;
+			}
 		}
 	}
 </script>
