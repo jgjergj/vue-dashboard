@@ -12,6 +12,26 @@
 						<v-card-title class="text-md-h4">Match</v-card-title>
 						<v-card-text>
 							<v-autocomplete
+								placeholder="State"
+								:items="states"
+								:rules="[rules.required]"
+								v-model="match.state"
+								item-text="name"
+								item-value="id"
+								return-object
+								@change="onStateChange(match.state.id)"
+							></v-autocomplete>
+							<v-autocomplete
+								placeholder="Sport"
+								:items="sports"
+								:rules="[rules.required]"
+								v-model="match.sport"
+								item-text="name"
+								item-value="id"
+								return-object
+								@change="onSportChange(match.sport.id)"
+							></v-autocomplete>
+							<v-autocomplete
 								placeholder="League"
 								:items="leagues"
 								:rules="[rules.required]"
@@ -19,7 +39,7 @@
 								item-text="name"
 								item-value="id"
 								return-object
-								@change="onLeagueChange"
+								@change="onLeagueChange(match.league.id)"
 							></v-autocomplete>
 
 							<v-autocomplete
@@ -113,7 +133,7 @@
 											:items="companies"
 											:rules="[rules.required]"
 											v-model="row.company"
-											@change="onCompanyChange"
+											@change="onCompanyChange(row)"
 											item-text="name"
 											item-value="id"
 											return-object
@@ -122,7 +142,7 @@
 									<td width="auto">
 										<v-autocomplete
 											placeholder="Account"
-											:items="accounts"
+											:items="row.companyAccounts"
 											:rules="[rules.required]"
 											v-model="row.account"
 											item-text="name"
@@ -342,16 +362,19 @@
 	import {
 		ArbitrageBetsClient,
 		ArbitrageMatchesClient,
+		StatesClient,
+		SportsClient,
 		LeaguesClient,
 		TeamsClient,
 		CompaniesClient,
 		AccountsClient,
 		StatusesClient,
 		TypesClient,
+		StateVM,
 		LeagueVM,
 		CreateArbitrageBetCommand,
 		UpdateArbitrageBetCommand,
-		UpdateArbitrageBetStatusCommand,
+		UpdateArbitrageBetStatusCommand
 	} from "@/utils/Api";
 
 	const lines = ["1", "x", "2", "12", "1x", "x2", "0-2", "3+"];
@@ -360,6 +383,7 @@
 	const newBetItem = {
 		index: 0,
 		company: "",
+		companyAccounts: [],
 		account: "",
 		status: "",
 		line: "",
@@ -388,6 +412,8 @@
 
 			this.arbitrageBetsClient = new ArbitrageBetsClient();
 			this.arbitrageMatchesClient = new ArbitrageMatchesClient();
+			this.statesClient = new StatesClient();
+			this.sportsClient = new SportsClient();
 			this.leaguesClient = new LeaguesClient();
 			this.teamsClient = new TeamsClient();
 			this.companiesClient = new CompaniesClient();
@@ -398,6 +424,8 @@
 
 		arbitrageBetsClient: ArbitrageBetsClient;
 		arbitrageMatchesClient: ArbitrageMatchesClient;
+		statesClient: StatesClient;
+		sportsClient: SportsClient;
 		leaguesClient: LeaguesClient;
 		teamsClient: TeamsClient;
 		companiesClient: CompaniesClient;
@@ -410,16 +438,22 @@
 			msg: "",
 		};
 		overlay = false;
+		states: any[] = [];
+		sports: any[] = [];
 		leagues: any[] = [];
 		teams: any[] = [];
 		companies: any[] = [];
-		accounts: any[] = [];
+		// accounts: any[] = [];
 		statuses: any[] = [];
 		types: any[] = [];
 		lines: any[] = [];
 
 		match = {
 			id: "",
+			stateId: "",
+			state: {},
+			sportId: "",
+			sport: {},
 			leagueId: "",
 			league: LeagueVM,
 			homeTeamId: "",
@@ -498,7 +532,6 @@
 		];
 
 		arbitrageBets: any[] = [];
-		newBetFillerData: any;
 		newBetItems: any[] = [];
 		typeText = "";
 
@@ -557,13 +590,13 @@
 		async mounted(): Promise<void> {
 			[
 				this.arbitrageBets,
-				this.leagues,
+				this.states,
 				this.companies,
 				this.statuses,
 				this.types,
 			] = await Promise.all([
 				this.arbitrageBetsClient.getAll(),
-				this.leaguesClient.getAll(),
+				this.statesClient.getAll(),
 				this.companiesClient.getAll(),
 				this.statusesClient.getAll(),
 				this.typesClient.getAll(),
@@ -580,12 +613,21 @@
 			this.newBetItems = [newBetItem];
 		}
 
-		async onLeagueChange(): Promise<void> {
-			this.teams = await this.teamsClient.getAll();
+		async onStateChange(stateId): Promise<void> {
+			this.sports = await this.sportsClient.getByState(stateId);
 		}
 
-		async onCompanyChange(): Promise<void> {
-			this.accounts = await this.accountsClient.getAll();
+		async onSportChange(sportId): Promise<void> {
+			this.leagues = await this.leaguesClient.getAll("SportId", sportId);
+		}
+
+		async onLeagueChange(leagueId): Promise<void> {
+			this.teams = await this.teamsClient.getAll("LeagueId", leagueId);
+		}
+
+		async onCompanyChange(row): Promise<void> {
+			const companyAccounts = await this.accountsClient.getAll("CompanyId", row.company.id) as [];
+			row.companyAccounts = companyAccounts;
 		}
 
 		async save(): Promise<void> {
@@ -597,6 +639,8 @@
 				let index = 0;
 
 				//todo: to see how to manage these better without sending the matchName
+				this.match.stateId = (this.match.state as any).id;
+				this.match.sportId = (this.match.sport as any).id;
 				this.match.leagueId = (this.match.league as any).id;
 				this.match.homeTeamId = (this.match.homeTeam as any).id;
 				this.match.awayTeamId = (this.match.awayTeam as any).id;
@@ -683,7 +727,7 @@
 		async updateArbitrageBet(bet): Promise<void> {
 			const item: UpdateArbitrageBetCommand = new UpdateArbitrageBetCommand();
 			item.id = bet.id;
-			item.arbitrageMatchId = this.match.id;
+			// item.arbitrageMatchId = this.match.id;
 			// item.index = index++;
 
 			item.companyId = bet.company.id;
@@ -701,8 +745,8 @@
 		}
 
 		resetMatchData(): void {
-			this.match.leagueId = "";
-			this.match.league = LeagueVM;
+			this.match.stateId = "";
+			this.match.state = StateVM;
 			this.match.homeTeamId = "";
 			this.match.homeTeam = "";
 			this.match.awayTeamId = "";
@@ -717,6 +761,7 @@
 				match: "",
 				type: "",
 				company: "",
+				companyAccounts: [],
 				account: "",
 				line: "",
 				stake: 0,
@@ -838,11 +883,15 @@
 			number: (value: string): string | boolean => {
 				const pattern = /^[0-9]\d{0,9}(\.\d{1,3})?%?$/;
 				return pattern.test(value) || "Invalid number.";
-			},
+			}
 		};
 
 		editArbitrage(items): void {
 			this.match.id = items[0].arbitrageMatch.id;
+			this.match.stateId = items[0].arbitrageMatch.stateId;
+			this.match.state = items[0].arbitrageMatch.state;
+			this.match.sportId = items[0].arbitrageMatch.sportId;
+			this.match.sport = items[0].arbitrageMatch.sport;
 			this.match.leagueId = items[0].arbitrageMatch.leagueId;
 			this.match.league = items[0].arbitrageMatch.league;
 			this.match.homeTeamId = items[0].arbitrageMatch.homeTeamId;
@@ -857,7 +906,7 @@
 
 			this.newBetItems = [];
 			items.forEach((item) => {
-				this.accounts.push(item.account);
+				(this.newBetItems as any).companyAccounts.push(item.account);
 				this.newBetItems.push(item);
 			});
 		}

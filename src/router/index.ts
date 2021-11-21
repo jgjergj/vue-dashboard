@@ -1,8 +1,10 @@
 import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import AuthService from "../utils/AuthService";
+import OidcSigInCallBack from "../views/OidcSignInCallBack.vue";
+import OidcSignOutCallBack from "../views/OidcSignOutCallBack.vue";
 import OidcCallback from "../views/OidcCallback.vue";
-import entities from '../constants/entities.json';
+import entities from "../constants/entities.json";
 
 Vue.use(VueRouter);
 
@@ -21,7 +23,7 @@ const routes: Array<RouteConfig> = [
 				path: "",
 				component: () => import("@/views/dashboard/Dashboard.vue"),
 				// async beforeEnter(to, from, next) {
-					
+
 				// 	// todo: to be uncommented for authentication
 				// 	const loggedIn = await AuthService.isLoggedIn();
 				// 	if (loggedIn) {
@@ -37,8 +39,8 @@ const routes: Array<RouteConfig> = [
 				component: () => import("@/views/ArbitrageBets.vue"),
 				meta: {
 					isSecure: true,
-				}
-			}
+				},
+			},
 			// {
 			// 	name: "Crud",
 			// 	path: "/:crud",
@@ -85,6 +87,16 @@ const routes: Array<RouteConfig> = [
 			// },
 		],
 	},
+	{
+		path: "/oidc-callback", // Needs to match redirectUri in you oidcSettings
+		name: "signin-callback",
+		component: OidcSigInCallBack,
+	},
+	{
+		path: "/signout-callback", // Needs to match popupRedirectUri in you oidcSettings
+		name: "OidcSignOutCallback",
+		component: OidcSignOutCallBack,
+	},
 ];
 
 entities.forEach((element) => {
@@ -113,7 +125,8 @@ const router = new VueRouter({
 // 			if (isLoggedIn) {
 // 				next();
 // 			} else {
-// 				next("/");
+// 				AuthService.login();
+// 				// next("/");
 // 			}
 // 		});
 // 	} else {

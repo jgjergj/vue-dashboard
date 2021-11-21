@@ -9,15 +9,15 @@ class AuthService {
 
 		const settings: any = {
 			client_id: "vue-client",
-			redirect_uri: "http://localhost:8080/oidc-callback",
+			redirect_uri: "http://localhost:8080/signin-callback",
 			response_type: "code",
 			scope: "openid profile read write dashboard-api",
-			post_logout_redirect_uri: "http://localhost:8080",
+			post_logout_redirect_uri: "http://localhost:8080/signout-callback",
 			// silent_redirect_uri: window.location.origin + '/static/silent-renew.html',
 			// accessTokenExpiringNotificationTime: 10,
 			// automaticSilentRenew: true,
-			// filterProtocolClaims: true,
-			// loadUserInfo: true,
+			filterProtocolClaims: true,
+			loadUserInfo: true,
 
 			userStore: new WebStorageStateStore({ store: window.localStorage }),
 			authority: AUTH0_DOMAIN,
@@ -49,6 +49,10 @@ class AuthService {
 
 	public async signinRedirectCallback() {
 		return this.userManager.signinRedirectCallback();
+	}
+
+	public async signoutRedirectCallback() {
+		return this.userManager.signoutRedirectCallback();
 	}
 
     public async isLoggedIn(): Promise<boolean> {
